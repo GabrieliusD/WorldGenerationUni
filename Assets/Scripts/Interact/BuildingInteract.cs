@@ -1,10 +1,11 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 public class BuildingInteract : BuildingBase
 {
     public GameObject worker;
+    GameObject workerObject;
     Button button;
     bool workerBought = false;
     public LayerMask SphereCheck;
@@ -23,7 +24,8 @@ public class BuildingInteract : BuildingBase
             {
                 if(!Physics.CheckSphere(v, 4.0f, SphereCheck))
                 {
-                    Instantiate(worker,hit.point + Vector3.up * 2,Quaternion.identity);
+                    workerObject = Instantiate(worker,hit.point + Vector3.up * 2,Quaternion.identity);
+                    workerObject.tag = "Player";
                     workerBought = true;
                 }
             }
@@ -39,5 +41,12 @@ public class BuildingInteract : BuildingBase
     {
         BuildMenuNavigation.Instance.EnableProduction();
         button.onClick.RemoveAllListeners();
+    }
+
+    public GameObject SpawnedWorker()
+    {
+        if(workerObject!= null)
+        return workerObject;
+        else return null;
     }
 }

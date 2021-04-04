@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 7697651868717843340}
   - component: {fileID: 6617940359355092388}
   - component: {fileID: 1205604179555638382}
-  - component: {fileID: 6363273366970939194}
+  - component: {fileID: -4663441998414201257}
+  - component: {fileID: -7736828483828206759}
   m_Layer: 10
   m_Name: temporaryStorage
   m_TagString: Untagged
@@ -114,7 +115,7 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &6363273366970939194
+--- !u!114 &-4663441998414201257
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -123,11 +124,25 @@ MonoBehaviour:
   m_GameObject: {fileID: 1759296518205019488}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ccb4ce1cb0f8b046bb49dbb4627ddc2, type: 3}
+  m_Script: {fileID: 11500000, guid: afbfaf2040eff1748bd7aafca136c712, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerType: 0
+--- !u!114 &-7736828483828206759
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1759296518205019488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a446ff17ea999364387d2603441306df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   health: 100
-  woodCost: 100
+  playerTypes: 0
+  woodCost: 0
   stoneCost: 0
   upgradeCost: 0
 --- !u!1 &2935251499676860210

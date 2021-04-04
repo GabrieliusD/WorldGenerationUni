@@ -23,6 +23,8 @@ public class Interactable : MonoBehaviour
         {
             for (int i = 0; i < players.Count; i++)
             { 
+                if(players[i]!=null)
+                {
                 float distance = Vector3.Distance(transform.position, players[i].transform.position);
                 if(distance < radius)
                 {
@@ -32,6 +34,7 @@ public class Interactable : MonoBehaviour
                         Interact();
                         elapsedTime = 0;
                     }
+                }
                 }
             }
         }

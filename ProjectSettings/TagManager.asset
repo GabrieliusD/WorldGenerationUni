@@ -8,6 +8,10 @@ TagManager:
   - water
   - building
   - waypoint
+  - tree
+  - metal
+  - stone
+  - Enemy
   layers:
   - Default
   - TransparentFX

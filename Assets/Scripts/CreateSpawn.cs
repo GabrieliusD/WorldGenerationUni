@@ -69,13 +69,13 @@ public class CreateSpawn
     {
         for(int yOffset = -numVisible; yOffset <= numVisible; yOffset++)
         {
-            int xOffset = -2;
+            int xOffset = -numVisible;
             Vector3 pos = new Vector3(xOffset * chunkSize, 0,yOffset * chunkSize);
             Debug.DrawLine(pos,pos + Vector3.up * 30,Color.red, Mathf.Infinity);
             TerrainChunk tc1 = terrainChunkDictionary[new Vector2(xOffset,yOffset)];
             for(int yOffset2 = -numVisible; yOffset2 <= numVisible; yOffset2++)
             {
-                int xOffset2 = 2;
+                int xOffset2 = numVisible;
                 Vector3 pos2 = new Vector3(xOffset2 * chunkSize, 0,yOffset2 * chunkSize);
                 Debug.DrawLine(pos2,pos2 + Vector3.up * 30,Color.red, Mathf.Infinity);
                 TerrainChunk tc2 = terrainChunkDictionary[new Vector2(xOffset2,yOffset2)];
@@ -114,16 +114,17 @@ public class CreateSpawn
         pathFound = PathRequest.RequestNonThreadedPath(pos1,pos2);
     }
 
-    public void playerSpawn(GameObject townHall)
+    public GameObject playerSpawn(GameObject townHall)
     {
         
-        GameObject.Instantiate(townHall, playerLoc, Quaternion.identity);
+        GameObject go = GameObject.Instantiate(townHall, playerLoc, Quaternion.identity);
         Camera.main.transform.position = new Vector3(playerLoc.x, playerLoc.y + 20.0f, playerLoc.z - 20.0f);
+        return go;
 
     }
-    public void enemySpawn(GameObject townHall)
+    public GameObject enemySpawn(GameObject townHall)
     {
-        GameObject.Instantiate(townHall, enemyLoc, Quaternion.identity);
+       return GameObject.Instantiate(townHall, enemyLoc, Quaternion.identity);
 
     }
 

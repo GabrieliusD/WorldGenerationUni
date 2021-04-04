@@ -37,6 +37,8 @@ public class ObjectPlacer : MonoBehaviour
         if(prefab != null)
         {
             currentPlaceableObject = Instantiate(prefab);
+            currentPlaceableObject.GetComponent<BuildingBase>().PlayerType = PlayerTypes.humanPlayer;
+            currentPlaceableObject.tag = "Player";
             prefab = null;
         }
     }
@@ -44,7 +46,8 @@ public class ObjectPlacer : MonoBehaviour
     public void setPrefab(GameObject newPrefab)
     {
         prefab = newPrefab;
-        ObjectParameter op = newPrefab.GetComponent<ObjectParameter>();
+        BuildingObjectParameter op = newPrefab.GetComponent<BuildingObjectParameter>();
+        op.playerTypes = PlayerTypes.humanPlayer;
         woodCost = op.GetWoodCost();
         stoneCost = op.GetStoneCost();
     }

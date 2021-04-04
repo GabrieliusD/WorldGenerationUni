@@ -13,7 +13,7 @@ public class chunks : MonoBehaviour
 
     public static Vector2 cameraPosition;
     int chunkSize;
-    int numVisible;
+    public int numVisible;
     public static Maps mapGen;
     Dictionary<Vector2,TerrainChunk> terrainChunkDictionary = new Dictionary<Vector2, TerrainChunk>();
     List<TerrainChunk> terrainChunksVisible = new List<TerrainChunk>();
@@ -23,8 +23,8 @@ public class chunks : MonoBehaviour
         grid = FindObjectOfType<Grid>();
         mapGen = FindObjectOfType<Maps>();
         spawn = FindObjectOfType<spawnObject>();
-        chunkSize = Maps.mapChunkSize -1 ;
-        numVisible = Mathf.RoundToInt(distance/chunkSize);
+        chunkSize = mapGen.mapChunkSize -1 ;
+        //numVisible = Mathf.RoundToInt(distance/chunkSize);
         cameraPosition = new Vector2(worldCentre.x, worldCentre.z);
 
         UpdateVisibleChunks();
@@ -50,8 +50,9 @@ public class chunks : MonoBehaviour
         grid.CreateGrid();
         CreateSpawn  c = new CreateSpawn();
         c.SpawnRandomAndFindPath(terrainChunkDictionary, numVisible, chunkSize);
-        c.enemySpawn(enemyTownHall);
-        c.playerSpawn(townHall);
+        
+        
+        spawn.SetBuildings(c.playerSpawn(townHall),c.enemySpawn(enemyTownHall));
         spawn.spawnTrees();
 
 

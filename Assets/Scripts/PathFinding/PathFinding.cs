@@ -23,14 +23,19 @@ public class PathFinding : MonoBehaviour
     }
     IEnumerator FindPath(Vector3 startPos, Vector3 targetPos)
     {
+        bool pathSuccess = false;
+        Node startNode = null;
+        Node targetNode = null;
+        Vector3[] wayPoints = new Vector3[0];
+        try{
+
+        
         Stopwatch sw= new Stopwatch();
         sw.Start();
 
-        Vector3[] wayPoints = new Vector3[0];
-        bool pathSuccess = false;
 
-        Node startNode = grid.NodeFromWorldPoint(startPos);
-        Node targetNode = grid.NodeFromWorldPoint(targetPos);
+         startNode = grid.NodeFromWorldPoint(startPos);
+         targetNode = grid.NodeFromWorldPoint(targetPos);
 
         if(startNode.walkable && targetNode.walkable)
         {
@@ -74,12 +79,16 @@ public class PathFinding : MonoBehaviour
                 }
             }
         }
+        } catch { 
+            requestManager.FinishedProcessingPath(null, false);
+        }
         yield return null;
         if(pathSuccess)
         {
             wayPoints = RetracePath(startNode, targetNode);
         }
         requestManager.FinishedProcessingPath(wayPoints, pathSuccess);
+
     }
 
     bool FindPathNonThreaded(Vector3 startPos, Vector3 targetPos)

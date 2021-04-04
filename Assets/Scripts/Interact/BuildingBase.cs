@@ -4,7 +4,13 @@ using UnityEngine;
 
 public class BuildingBase : MonoBehaviour
 {
+    public PlayerTypes PlayerType;
     bool isSelected = false;
+
+    public virtual void Start()
+    {
+        this.gameObject.AddComponent<InteractAttackable>();
+    }
     public virtual void Interaction()
     {
 

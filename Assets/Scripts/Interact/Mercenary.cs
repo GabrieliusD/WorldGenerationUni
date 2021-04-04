@@ -4,16 +4,29 @@ using UnityEngine;
 using UnityEngine.UI;
 public class Mercenary : BuildingBase
 {
+    public Animator animator;
     public GameObject soldier;
     Button button;
     bool soldierBought = false;
     public LayerMask SphereCheck;
 
     static GameObject currentSoldier;
+    public override void Start()
+    {
+        base.Start();
+        if(PlayerType == PlayerTypes.AIPlayer)
+        {
+            this.gameObject.AddComponent<AIMercenary>();
+            Animator animator = this.gameObject.AddComponent<Animator>();
+            animator.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load("AIMercenaryStates", typeof(RuntimeAnimatorController));
+        }
+    }
     public override void Interaction()
     {
         soldierBought = false;
         Debug.Log("Recruit Soldier");
+        int goldCost = soldier.GetComponent<UnitObjectParameter>().goldCost;
+        if(ResourceManager.Instance.PurchaseSoldier(goldCost, PlayerType));
         while(!soldierBought)
         {
             Vector3 centre = transform.position;
@@ -25,9 +38,18 @@ public class Mercenary : BuildingBase
             {
                 if(!Physics.CheckSphere(v, 4.0f, SphereCheck))
                 {
-                    Instantiate(soldier,hit.point + Vector3.up * 2,Quaternion.identity);
+                    GameObject s = Instantiate(soldier,hit.point + Vector3.up * 2,Quaternion.identity);
+                    
                     soldierBought = true;
                     currentSoldier = null;
+                    if(PlayerType == PlayerTypes.AIPlayer)
+                    {
+                        s.tag = "Enemy";
+                        s.GetComponent<UnitBase>().PlayerType = PlayerTypes.AIPlayer;
+                        s.GetComponent<Animator>().enabled = true;
+                        GetComponent<AIMercenary>().addSoldierToTheList(s.GetComponent<Soldier>());
+                        
+                    } else s.tag = "Player";
                 }
             }
         }

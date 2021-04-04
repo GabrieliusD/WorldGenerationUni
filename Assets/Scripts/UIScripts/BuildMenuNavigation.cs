@@ -39,12 +39,18 @@ public class BuildMenuNavigation : MonoBehaviour
         ProductionPanel.gameObject.SetActive(false);
         MillitaryPanel.gameObject.SetActive(true);
         ConstructionPanel.gameObject.SetActive(false);
+        TownHallMenu.gameObject.SetActive(false);
+        MarketMenu.gameObject.SetActive(false);
+        MercnerayMenu.gameObject.SetActive(false);
     }
     public void EnableConstruction()
     {
         ProductionPanel.gameObject.SetActive(false);
         MillitaryPanel.gameObject.SetActive(false);
-        ConstructionPanel.gameObject.SetActive(true);        
+        ConstructionPanel.gameObject.SetActive(true);     
+        TownHallMenu.gameObject.SetActive(false);
+        MarketMenu.gameObject.SetActive(false);
+        MercnerayMenu.gameObject.SetActive(false);   
     }
 
     public void EnableTownhallMenu()

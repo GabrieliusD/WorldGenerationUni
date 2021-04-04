@@ -20,12 +20,13 @@ public class Maps : MonoBehaviour
 {
     public ColorSettings colorSettings;
     public ColorGen colorGen = new ColorGen();
-    public static int mapChunkSize = 241;
+    
 
     [SerializeField]
     NoiseSettings[] noiseSettings;
     [Range(0,6)]
     public int levelOfDetail;
+    public int mapChunkSize = 241;
     public int seed = 1337;
     public bool autoUpdate;
     public float minValue;

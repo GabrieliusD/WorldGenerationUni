@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class UnitBase : MonoBehaviour
 {
+    public PlayerTypes PlayerType;
     protected float health = 20.0f;
     public Interactable focus;
     public Interactable lastFocus;
@@ -13,10 +14,26 @@ public class UnitBase : MonoBehaviour
     protected Vector3[] path;
     int targetIndex;
 
+    public Rigidbody body;
+
     // Update is called once per frame
-    void Update()
+    public virtual void Start()
     {
-        
+        body = GetComponent<Rigidbody>();
+    }
+    
+    public void takeDamage(float damage)
+    {
+        health-= damage;
+        Debug.Log("taking damage health is: " + health);
+    }
+    public void DestoryUnit()
+    {
+        if(health <= 0)
+        {
+            Destroy(this.gameObject);
+            Debug.Log("Soldier destroyed");
+        }
     }
 
     public void SetFocus(Interactable newFocus)
@@ -46,12 +63,15 @@ public class UnitBase : MonoBehaviour
     }
     public void IssuePath(Vector3 target)
     {
+        if(target != null && this != null)
         PathRequest.RequestPath(transform.position, target, OnPathFound);
     }
 
     public void TrackTarget(Interactable newTarget)
     {
+        
         target = newTarget.transform;
+        IssuePath(target.position);
     }
 
     public void StopTracking()

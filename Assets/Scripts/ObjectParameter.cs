@@ -5,28 +5,16 @@ using UnityEngine;
 public class ObjectParameter : MonoBehaviour
 {
     public float health;
-    public int woodCost;
-    public int stoneCost;
-    public int upgradeCost;
 
     void Update()
     {
         if(health <= 0)
-        GameObject.Destroy(this);
+        Destroy(this.gameObject);
     }
 
-    public void takeDamage(int amount)
+    public void takeDamage(float amount)
     {
         health -= amount;
     }
 
-    public int GetWoodCost()
-    {
-        return woodCost;
-    }
-
-    public int GetStoneCost()
-    {
-        return stoneCost;
-    }
 }

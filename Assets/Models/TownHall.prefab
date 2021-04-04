@@ -14,10 +14,10 @@ GameObject:
   - component: {fileID: 8709000315696534012}
   - component: {fileID: 5594259735125613242}
   - component: {fileID: -7456191236436027429}
-  - component: {fileID: 8238704821922725874}
+  - component: {fileID: 6555554657225093577}
   m_Layer: 10
   m_Name: TownHall
-  m_TagString: building
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -31,7 +31,7 @@ Transform:
   m_GameObject: {fileID: 4474005917765864273}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 3.99, z: 0}
-  m_LocalScale: {x: 4.78, y: 3.1, z: 1.27}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -43,7 +43,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4474005917765864273}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: -7105859763027046842, guid: da1e7ffa233326443bae374364d63eae, type: 3}
 --- !u!23 &3088994280513436274
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -63,7 +63,15 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: -2737864160253987463, guid: da1e7ffa233326443bae374364d63eae, type: 3}
+  - {fileID: -5102767465448291838, guid: da1e7ffa233326443bae374364d63eae, type: 3}
+  - {fileID: 2505547009927152203, guid: da1e7ffa233326443bae374364d63eae, type: 3}
+  - {fileID: -3653356834361587249, guid: da1e7ffa233326443bae374364d63eae, type: 3}
+  - {fileID: -8009279989220285430, guid: da1e7ffa233326443bae374364d63eae, type: 3}
+  - {fileID: 2045345859530152674, guid: da1e7ffa233326443bae374364d63eae, type: 3}
+  - {fileID: 7100657924009731265, guid: da1e7ffa233326443bae374364d63eae, type: 3}
+  - {fileID: -4588986480249634298, guid: da1e7ffa233326443bae374364d63eae, type: 3}
+  - {fileID: -6839510035263034713, guid: da1e7ffa233326443bae374364d63eae, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -96,8 +104,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 15.56392, y: 17.801569, z: 8.236076}
+  m_Center: {x: -3.8275523, y: 8.4007845, z: 0.35499096}
 --- !u!114 &5594259735125613242
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -110,10 +118,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c8efafc36384944dbe64ef83bc36251, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PlayerType: 0
   worker: {fileID: 334114480260597300, guid: 7798573cc1894b64abc4e610507e476e, type: 3}
   SphereCheck:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 0
 --- !u!114 &-7456191236436027429
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -129,7 +138,7 @@ MonoBehaviour:
   taskLength: 2
   radius: 10
   players: []
---- !u!114 &8238704821922725874
+--- !u!114 &6555554657225093577
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -138,10 +147,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 4474005917765864273}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ccb4ce1cb0f8b046bb49dbb4627ddc2, type: 3}
+  m_Script: {fileID: 11500000, guid: a446ff17ea999364387d2603441306df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   health: 100
-  woodCost: 100
+  playerTypes: 0
+  woodCost: 0
   stoneCost: 0
   upgradeCost: 0

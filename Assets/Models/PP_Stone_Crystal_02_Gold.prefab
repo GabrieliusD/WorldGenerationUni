@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: -3033194582232925270}
   m_Layer: 0
   m_Name: PP_Stone_Crystal_02_Gold
-  m_TagString: Untagged
+  m_TagString: metal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

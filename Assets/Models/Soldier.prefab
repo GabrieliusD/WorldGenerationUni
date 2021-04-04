@@ -14,9 +14,12 @@ GameObject:
   - component: {fileID: 9118683244491743235}
   - component: {fileID: 5295289929855888733}
   - component: {fileID: 6882321027148810350}
-  m_Layer: 0
+  - component: {fileID: 6667448614517333771}
+  - component: {fileID: -681300471112680878}
+  - component: {fileID: 2084939435176450276}
+  m_Layer: 9
   m_Name: Soldier
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -110,9 +113,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 562d83fb4ac199b419589990bbb1c79e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PlayerType: 0
   focus: {fileID: 0}
   lastFocus: {fileID: 0}
   speed: 5
+  body: {fileID: 0}
 --- !u!54 &6882321027148810350
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -129,3 +134,52 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &6667448614517333771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4132675427891378251}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f3333aef02bccb42989d707816ad1da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  taskLength: 1
+  radius: 10
+  players: []
+--- !u!95 &-681300471112680878
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4132675427891378251}
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: e4ba264cc21a52740aba5301d12f7195, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &2084939435176450276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4132675427891378251}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f868f4c3a56583f43ad9cf7c6beba690, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 100
+  goldCost: 200
+  attackDamage: 0

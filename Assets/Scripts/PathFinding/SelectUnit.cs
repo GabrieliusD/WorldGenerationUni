@@ -23,9 +23,9 @@ public class SelectUnit : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if(Physics.Raycast(ray, out hit))
             {
-                if(hit.collider.tag == "unit")
+                if(hit.collider.tag == "Player")
                 {
-                    unit u = hit.collider.GetComponent<unit>();
+                    UnitBase u = hit.collider.GetComponent<UnitBase>();
                     if(!units.Contains(u))
                         units.Add(u);
                 } else{
@@ -49,6 +49,7 @@ public class SelectUnit : MonoBehaviour
             Vector3  screenPointMod = new Vector3(screenpoint.x, Screen.height - screenpoint.y, screenpoint.z);
             if(rect.Contains(screenPointMod))
             {
+                if(unit.tag == "Player")
                 if(!units.Contains(unit))
                  units.Add(unit);
             }
@@ -84,6 +85,8 @@ public class SelectUnit : MonoBehaviour
 
             if(Physics.Raycast(ray, out hit,Mathf.Infinity))
             {
+                if(hit.collider.tag != "Player")
+                {
                 Interactable inte = hit.collider.GetComponent<Interactable>();
                 if(inte != null)
                 {
@@ -91,14 +94,19 @@ public class SelectUnit : MonoBehaviour
                     {
                         if(WorkerManager.Instance.AllowWorker(inte.GetResourceType()))
                         {
-                            if(u.GetType() == typeof(unit))
+                            if(u.GetType() == typeof(unit) && inte.GetType() != typeof(InteractAttackable))
                             {
                                 u.SetFocus(inte);
                                 WorkerManager.Instance.IncreaseCurrentWorkers(inte.GetResourceType());
                             }
                         }
+                            if(u.GetType() == typeof(Soldier) && inte.GetType() == typeof(InteractAttackable))
+                            {
+                                u.SetFocus(inte);
+                            }
                     }
                 } else foreach(UnitBase u in units) u.RemoveFocus();
+                }
             }
 
         }
@@ -116,6 +124,8 @@ public class SelectUnit : MonoBehaviour
                 if(Physics.Raycast(ray, out hit,Mathf.Infinity, layer))
                 {
                     Vector3 target = hit.point;
+                    units.RemoveAll((item => item == null));
+
                     foreach(UnitBase u in units)
                     {
                         u.GetComponent<UnitBase>().IssuePath(target);

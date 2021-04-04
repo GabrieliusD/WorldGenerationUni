@@ -20,14 +20,14 @@ public class spawnObject : MonoBehaviour
     public float displayRadius = 1;
     List<Vector2> points;
 
-    GameObject[] townHalls;
-    void FindBuildings()
+    GameObject[] townHalls = new GameObject[2];
+    public void SetBuildings(GameObject t1, GameObject t2)
     {
-        townHalls = GameObject.FindGameObjectsWithTag("building");
+        townHalls[0] = t1;
+        townHalls[1] = t2; 
     }
     public void spawnTrees()
     {
-        FindBuildings();
         points = poissonDiscSampling.GeneratePoints(radius, regionSize, rejectionSample);
 
         RaycastHit hit;
@@ -43,11 +43,20 @@ public class spawnObject : MonoBehaviour
                         float value = Random.Range(0, maxSample);
                         
                         if(value <= MetalValue)
+                        {
                             spawnObject = metals[Random.Range(0, metals.Length-1)];
+                            spawnObject.tag = "metal";
+                        }
                         if(value <= StoneValue)
+                        {
                             spawnObject = stones[Random.Range(0, stones.Length-1)];
+                            spawnObject.tag = "stone";
+                        }
                         if(value <= TreeValue)
+                        {
                             spawnObject = trees[Random.Range(0, trees.Length-1)];
+                            spawnObject.tag = "tree";
+                        }
 
                         float angle = Random.Range(0, 360);
                         GameObject obj = Instantiate(spawnObject, hit.point, Quaternion.AngleAxis(angle,Vector3.up));

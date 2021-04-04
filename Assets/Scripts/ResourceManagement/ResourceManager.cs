@@ -26,7 +26,7 @@ public class ResourceManager : MonoBehaviour
 
     void Start()
     {
-        for (int i = 0; i < numPlayers-1; i++)
+        for (int i = 0; i < numPlayers; i++)
         {            
             wood[i] = 1000;
             stone[i] = 0;
@@ -117,6 +117,17 @@ public class ResourceManager : MonoBehaviour
         {
             wood[pt] -= buildingWoodCost;
             stone[pt] -= buildingStoneCost;
+            return true;
+        } else return false;
+    }
+
+    public bool PurchaseSoldier(int goldCost, PlayerTypes playerType)
+    {
+        int pt = (int)playerType;                
+
+        if(goldCost <= gold[pt])
+        {
+            gold[pt] -= goldCost;
             return true;
         } else return false;
     }

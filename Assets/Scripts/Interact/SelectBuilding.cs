@@ -25,8 +25,12 @@ public class SelectBuilding : MonoBehaviour
                 building = hit.collider.GetComponent<BuildingBase>();
                 if(building != null && building != currentlySelected)
                 {
-                    building.EnableMenu();
-                    currentlySelected = building;
+                    PlayerTypes pt = building.PlayerType;
+                    if(pt == PlayerTypes.humanPlayer)
+                    {
+                        building.EnableMenu();
+                        currentlySelected = building;
+                    }
                 }
                 
             } 

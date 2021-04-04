@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System.Linq;
 public enum ResourceType {None, Wood, Stone, Metal};
 public struct UnitStorage
 {
@@ -62,13 +62,19 @@ public class unit : UnitBase
     public UnitStorage unitStorage;
 
     public PlayerTypes playerTypes = PlayerTypes.humanPlayer;
-    void Start()
+    override public void Start()
     {
+        base.Start();
         unitStorage = new UnitStorage(100);
     }
 
     void Update()
     {
+        if(health <= 0)
+        {
+            Destroy(this.gameObject);
+            Debug.Log("Soldier destroyed");
+        }
         //if(target != null)
         //{
             //IssuePath(target.position);
@@ -94,9 +100,26 @@ public class unit : UnitBase
     public void DepositResource()
     {
         lastFocus = focus;
-        Storage storageLocation = FindObjectOfType<Storage>();
+        Storage storageLocation = closestStorage();
         SetFocus(storageLocation);
         IssuePath(storageLocation.transform.position);
+    }
+    public Storage closestStorage()
+    {
+        float distance = Mathf.Infinity;
+        Storage[] s = FindObjectsOfType<Storage>();
+        Storage closest = null;
+        foreach (var item in s)
+        {
+            float newDistance = Vector3.Distance(item.transform.position, transform.position);
+            if(newDistance < distance)
+            {
+                distance = newDistance;
+                closest = item;
+            }
+        }
+
+        return closest;
     }
 
     public override void RemoveFocus()
