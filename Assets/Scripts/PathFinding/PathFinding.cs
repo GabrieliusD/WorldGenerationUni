@@ -13,15 +13,12 @@ public class PathFinding : MonoBehaviour
         requestManager = GetComponent<PathRequest>();
     }
 
-    public void StartFindPath(Vector3 startpos, Vector3 targetpos)
-    {
-        StartCoroutine(FindPath(startpos, targetpos));
-    }
+
     public bool StartFindingPathNonThreaded(Vector3 startpos, Vector3 targetpos)
     {
         return FindPathNonThreaded(startpos, targetpos);
     }
-    IEnumerator FindPath(Vector3 startPos, Vector3 targetPos)
+    public void FindPath(Path request, Action<PathResult> callback)
     {
         bool pathSuccess = false;
         Node startNode = null;
@@ -33,9 +30,19 @@ public class PathFinding : MonoBehaviour
         Stopwatch sw= new Stopwatch();
         sw.Start();
 
-
+        Vector3 startPos = request.pathStart;
+        Vector3 targetPos = request.pathEnd;
          startNode = grid.NodeFromWorldPoint(startPos);
          targetNode = grid.NodeFromWorldPoint(targetPos);
+        int tries = 0;
+        while(tries < 10 && !targetNode.walkable)
+        {
+            Vector3 dir = (startPos - targetPos).normalized;
+            targetPos = targetPos + dir * 2;
+
+            targetNode = grid.NodeFromWorldPoint(targetPos);
+            tries++;
+        }
 
         if(startNode.walkable && targetNode.walkable)
         {
@@ -80,14 +87,12 @@ public class PathFinding : MonoBehaviour
             }
         }
         } catch { 
-            requestManager.FinishedProcessingPath(null, false);
         }
-        yield return null;
         if(pathSuccess)
         {
             wayPoints = RetracePath(startNode, targetNode);
         }
-        requestManager.FinishedProcessingPath(wayPoints, pathSuccess);
+        callback(new PathResult(wayPoints,pathSuccess,request.callback));
 
     }
 

@@ -5,6 +5,7 @@ using UnityEngine.AI;
 public class chunks : MonoBehaviour
 {
     public GameObject townHall;
+    WorldSettings worldSettings;
     public GameObject enemyTownHall;
     public const float distance = 600;
     Grid grid;
@@ -20,6 +21,7 @@ public class chunks : MonoBehaviour
 
     int num = 0;
     void Start() {
+        worldSettings = WorldSettings.Instance;
         grid = FindObjectOfType<Grid>();
         mapGen = FindObjectOfType<Maps>();
         spawn = FindObjectOfType<spawnObject>();
@@ -36,11 +38,11 @@ public class chunks : MonoBehaviour
     }
     void UpdateVisibleChunks()
     {
-        for(int yOffset = -numVisible; yOffset <= numVisible; yOffset++)
+        for(int yOffset = 0; yOffset < 3; yOffset++)
         {
-            for(int xOffset = -numVisible; xOffset <= numVisible; xOffset++)
+            for(int xOffset = 0; xOffset < 3; xOffset++)
             {
-                Vector2 viewedChunkCoord = new Vector2(xOffset,yOffset);
+                Vector2 viewedChunkCoord = new Vector2(xOffset,-yOffset);
                 
                 terrainChunkDictionary.Add(viewedChunkCoord, new TerrainChunk(viewedChunkCoord, chunkSize, transform));
                 
@@ -51,8 +53,11 @@ public class chunks : MonoBehaviour
         CreateSpawn  c = new CreateSpawn();
         c.SpawnRandomAndFindPath(terrainChunkDictionary, numVisible, chunkSize);
         
-        
-        spawn.SetBuildings(c.playerSpawn(townHall),c.enemySpawn(enemyTownHall));
+        GameObject th= c.playerSpawn(townHall);
+        GameObject eth = c.enemySpawn(enemyTownHall);
+        spawn.SetBuildings(th, eth);
+        grid.SetNodeUnwakable(th);
+        grid.SetNodeUnwakable(eth);
         spawn.spawnTrees();
 
 
@@ -75,8 +80,9 @@ public class chunks : MonoBehaviour
             meshFilter = meshObject.AddComponent<MeshFilter>();
             meshObject.transform.position = positionV3;
             meshObject.transform.SetParent(parent);
+            meshObject.tag = "Ground";
             SetVisible(true);
-            MeshMatData data = chunks.mapGen.GetGeneratedData(position);
+            MeshMatData data = chunks.mapGen.GetGeneratedData(position, coord);
             meshFilter.mesh = MeshGen.GenerateTerrainMesh(data.map, 1).CreateMesh();
             MeshRenderer.material = data.mat;
             meshObject.AddComponent<MeshCollider>();

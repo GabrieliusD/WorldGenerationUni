@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2639654014292273039}
   - component: {fileID: 2639654014294276432}
   - component: {fileID: -3033194582232925270}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: PP_Stone_Crystal_02_Gold
   m_TagString: metal
   m_Icon: {fileID: 0}

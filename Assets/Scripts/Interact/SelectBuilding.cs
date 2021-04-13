@@ -31,7 +31,7 @@ public class SelectBuilding : MonoBehaviour
                         building.EnableMenu();
                         currentlySelected = building;
                     }
-                }
+                } 
                 
             } 
         }

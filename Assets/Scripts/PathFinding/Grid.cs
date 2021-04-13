@@ -73,6 +73,23 @@ public class Grid : MonoBehaviour
         return grid[x,y];
     }
 
+    public void SetNodeUnwakable(GameObject gameObject)
+    {
+        Vector3 worldPos = gameObject.transform.position;
+        Collider collider = gameObject.GetComponent<Collider>();
+        Vector3 size = collider.bounds.size/2;
+
+        for (int x = -(int)size.x; x < size.x; x++)
+        {
+            for (int y = -(int)size.z; y < size.z; y++)
+            {
+                Vector3 checkPos = worldPos + new Vector3(-x,0,y);
+                Node node = NodeFromWorldPoint(checkPos);
+                node.walkable = false;
+            }
+        }
+    }
+
     public List<Node> GetNeighbours(Node node)
     {
         List<Node> neighbours = new List<Node>();

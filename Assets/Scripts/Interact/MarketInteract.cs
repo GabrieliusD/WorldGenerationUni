@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class MarketInteract : BuildingBase
 {
+    public override void Start()
+    {
+        base.Start();
+        if(PlayerType == PlayerTypes.AIPlayer) 
+        gameObject.AddComponent<AIMarket>();
+    }
     public override void EnableMenu()
     {
         BuildMenuNavigation.Instance.EnableMarketMenu();

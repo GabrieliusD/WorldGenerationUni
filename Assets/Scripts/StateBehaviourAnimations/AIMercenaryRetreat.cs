@@ -6,7 +6,7 @@ public class AIMercenaryRetreat : AIMercenaryBase
 {
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
 		base.OnStateEnter(animator,stateInfo,layerIndex);
-        ai.SetAIState(AIStates.Retreat);
+        aiState.SetState(AIStates.Retreat);
         ai.SendSoldiersToAttack();
 	}
 
@@ -19,6 +19,6 @@ public class AIMercenaryRetreat : AIMercenaryBase
     }
 
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-        ai.SetAIState(AIStates.Idle);
+        aiState.SetState(AIStates.Idle);
 	}
 }

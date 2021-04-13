@@ -11,10 +11,11 @@ public class AIMercenaryRecruit : AIMercenaryBase
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo animatorStateInfo, int layerIndex)
     {
-                ai.recruitSoldier();
         if(ai.getRecruitedSoldiersCount() >= ai.maxSoldiers)
         {
             animator.SetBool("recruit",  false);
+        } else {
+            ai.recruitSoldier();
         }
 
     }

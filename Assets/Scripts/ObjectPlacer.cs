@@ -5,7 +5,7 @@ using UnityEngine;
 public class ObjectPlacer : MonoBehaviour
 {
     public LayerMask layer;
-
+    public Vector2 objectSize = new Vector2(6,6);
     public LayerMask ObjectUnplacableLayers;
     public GameObject testBuilding;
     public GameObject prefab;
@@ -16,9 +16,12 @@ public class ObjectPlacer : MonoBehaviour
     GameObject currentPlaceableObject;
     float mouseWheelRotation;
 
+    Grid grid;
+
     void Start()
     {
         rManger = ResourceManager.Instance;
+        grid = FindObjectOfType<Grid>();
     }
     void Update()
     {
@@ -45,24 +48,30 @@ public class ObjectPlacer : MonoBehaviour
 
     public void setPrefab(GameObject newPrefab)
     {
+        if(currentPlaceableObject != null) Destroy(currentPlaceableObject);
+
         prefab = newPrefab;
         BuildingObjectParameter op = newPrefab.GetComponent<BuildingObjectParameter>();
         op.playerTypes = PlayerTypes.humanPlayer;
         woodCost = op.GetWoodCost();
         stoneCost = op.GetStoneCost();
     }
+
     public void Release()
     {
         if(Input.GetMouseButtonDown(0))
         {
-            if(!Physics.CheckSphere(currentPlaceableObject.transform.position, 2.0f, ObjectUnplacableLayers))
+            
+            if(!Physics.CheckSphere(currentPlaceableObject.transform.position, 0.5f, ObjectUnplacableLayers))
             {
                 if(rManger.PurchaseBuilding(woodCost, stoneCost, PlayerTypes.humanPlayer))
                 {
+                    grid.SetNodeUnwakable(currentPlaceableObject);
                     woodCost = 0;
                     stoneCost = 0;
                     currentPlaceableObject = null;
                     prefab = null;
+
                 }
             }
         }

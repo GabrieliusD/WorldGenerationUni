@@ -9,43 +9,65 @@ public class Soldier : UnitBase
     SoldierState soldierState = SoldierState.Patrol;
     // Start is called before the first frame update
     float attackDamage = 5.0f;
-    float attackDistance = 5.0f;
+    float attackDistance = 6.0f;
     public float attackSpeed = 2.0f;
     float timeElapsed;
-    Animator animator;
+    bool attacking = false;
+    public float searchDistance = 20.0f;
     public override void Start()
     {
         base.Start();
-        animator = GetComponent<Animator>();
     }
     public Interactable GetInteractable()
     {
         return focus;
     }
 
+
     // Update is called once per frame
     void Update()
     {
-        if(focus != null && body.velocity.magnitude < 0)
-            IssuePath(focus.transform.position);
-        DestoryUnit();
         if(focus!= null)
         {
             float distance =  Vector3.Distance(this.transform.position, focus.transform.position);
             animator.SetFloat("distance", distance);
             if(distance <= attackDistance)
             {
+                attacking = true;
                 timeElapsed += Time.deltaTime;
                 if(timeElapsed >= attackSpeed)
                 {
                     DamageFocus();
+                    animator.SetBool("attack", true);
                     timeElapsed = 0f;
                 }
+            } 
+            else {
+                attacking = false;
+                animator.SetBool("attack", false);
+
             }
 
         }
-        checkState();
+        if(focus != null && !moving && !attacking)
+            IssuePath(focus.transform.position);
+        if(focus == null){
+                attacking = false;
+                animator.SetBool("attack", false);
 
+            }
+
+        if(tag == "Player")
+        AttackClosesEnemy();
+        checkState();
+        
+
+
+    }
+
+    private void FixedUpdate()
+    {
+        
     }
 
     public void DamageFocus()
@@ -56,11 +78,13 @@ public class Soldier : UnitBase
 
     public void FindNearestUnitToAttack()
     {
+        if(tag == "Enemy")
         InvokeRepeating("SearchEnemies", 0.5f, 1.0f);
     }
 
     public void StopSearchingForUnits()
     {
+        if(tag == "Enemy")
         CancelInvoke("SearchEnemies");
     }
 
@@ -91,6 +115,40 @@ public class Soldier : UnitBase
         animator.SetFloat("distance", closest);
     }
 
+    void AttackClosesEnemy()
+    {
+        List<GameObject> players = GameObjectTracker.Instance.GetEnemyGameObjects();
+
+        List<GameObject> inDistance = new List<GameObject>();
+        foreach (var player in players)
+        {
+            if(player!=null)
+            {
+                float distance = Vector3.Distance(this.transform.position, player.transform.position);
+                if(distance <= searchDistance)
+                {
+                    inDistance.Add(player);
+                }
+            }
+        }
+
+
+        float closest = Mathf.Infinity;
+        GameObject closestObject = null;
+
+        foreach (var item in inDistance)
+        {
+            float distance = Vector3.Distance(this.transform.position, item.transform.position);
+            if(distance < closest)
+            {
+                closest = distance;
+                closestObject = item;
+            }
+        }
+        if(closestObject != null)
+        focus = closestObject.GetComponent<InteractAttackable>();
+    }
+
 
     public float attack()
     {
@@ -99,11 +157,11 @@ public class Soldier : UnitBase
 
     public void checkState()
     {
-        if(body.velocity.magnitude > 0)
+        if(moving)
             soldierState = SoldierState.Patrol;
-        if(focus == null && body.velocity.magnitude <= 0)
+        if(focus == null && !moving && !attacking)
             soldierState = SoldierState.Idle;
-        if(focus != null && body.velocity.magnitude > 0)
+        if(focus != null && moving && attacking)
             soldierState = SoldierState.Attacking;
     }
 

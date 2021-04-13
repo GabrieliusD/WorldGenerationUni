@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 public class Mercenary : BuildingBase
 {
+    public float radius = 6;
     public Animator animator;
     public GameObject soldier;
     Button button;
@@ -23,22 +24,22 @@ public class Mercenary : BuildingBase
     }
     public override void Interaction()
     {
+        int loops = 0;
         soldierBought = false;
         Debug.Log("Recruit Soldier");
         int goldCost = soldier.GetComponent<UnitObjectParameter>().goldCost;
-        if(ResourceManager.Instance.PurchaseSoldier(goldCost, PlayerType));
+        if(ResourceManager.Instance.PurchaseSoldier(goldCost, PlayerType))
         while(!soldierBought)
         {
             Vector3 centre = transform.position;
-            int radius = 5;
             Vector2 randomPos = Random.insideUnitCircle * radius;
             Vector3 v = centre + new Vector3(randomPos.x, 10, randomPos.y);
             RaycastHit hit;
             if(Physics.Raycast(v, Vector3.down, out hit,20.0f))
             {
-                if(!Physics.CheckSphere(v, 4.0f, SphereCheck))
+                if(!Physics.CheckSphere(hit.point, 1.0f, SphereCheck))
                 {
-                    GameObject s = Instantiate(soldier,hit.point + Vector3.up * 2,Quaternion.identity);
+                    GameObject s = Instantiate(soldier,hit.point,Quaternion.identity);
                     
                     soldierBought = true;
                     currentSoldier = null;
@@ -50,9 +51,14 @@ public class Mercenary : BuildingBase
                         GetComponent<AIMercenary>().addSoldierToTheList(s.GetComponent<Soldier>());
                         
                     } else s.tag = "Player";
+                        
+
                 }
             }
+            loops++;
+
         }
+            Debug.Log("Num Loops: " + loops);
     }
 
     public void setSoldier(GameObject soldier)
@@ -71,5 +77,11 @@ public class Mercenary : BuildingBase
     {
         BuildMenuNavigation.Instance.EnableProduction();
         button.onClick.RemoveAllListeners();
+    }
+
+    private void OnDestroy()
+    {
+        if(trackIfDestroyed !=null)
+        trackIfDestroyed.SetBool("mercenary", false);
     }
 }

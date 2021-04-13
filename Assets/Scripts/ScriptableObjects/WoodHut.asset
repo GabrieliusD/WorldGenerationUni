@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af15eaa60e869c04c88e72e069ed1482, type: 3}
   m_Name: WoodHut
   m_EditorClassIdentifier: 
-  buildingType: {fileID: 1416746857994558793, guid: 6a1b8dc9c5aa8fd48afe54ff937abd25, type: 3}
+  buildingType: {fileID: 1199276198021662366, guid: 0e88f826c3326484f979170dec19770c, type: 3}
   name: WoodHut
   Health: 0
   WoodCost: 0

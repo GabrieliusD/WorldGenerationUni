@@ -2,18 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum AIStates{Idle, Attack, Retreat, None};
 public class AIMercenary : MonoBehaviour
 {
-    AIStates aiStates = AIStates.Idle;
+    AIStateManager AIState;
     public float percMinSoldiers = 40.0f;
     public int maxSoldiers = 5;
+    int stage = 0;
+    public int soldierIncreaseBetweenStages;
+    public int defaultSoldiers = 5;
+    public int soldierIncrease = 2;
     public float timeBetweenAttacks = 10;
     List<Soldier> recruitedSoldiers = new List<Soldier>();
     List<Soldier> idleSoldiers = new List<Soldier>(); 
     GameObject playerTownHall;
     GameObject aiTownHall;
     Mercenary mercenary;
+    Animator animator;
     float timeElapsed;
     float timeElapsedRecruiting;
     float recruitFrequancy = 2.0f;
@@ -21,9 +25,23 @@ public class AIMercenary : MonoBehaviour
     public bool allowAttack {get; private set;} = false;
     private void Start()
     {
+        soldierIncrease = maxSoldiers +2;
+        AIState = AIStateManager.Instance;
         playerTownHall = GameObject.Find("TownHall(Clone)");
         aiTownHall = GameObject.Find("EnemyTownHall(Clone)");
         mercenary = GetComponent<Mercenary>();
+        animator = GetComponent<Animator>();
+        ConfigureMercenarySettings();
+    }
+
+    public void ConfigureMercenarySettings()
+    {
+        WorldSettings ws = WorldSettings.Instance;
+        Difficulty diff = ws.GetDifficulty();
+        defaultSoldiers = diff.aIParameters.startingUnitSize;
+        soldierIncrease = diff.aIParameters.extraUnitsForDefence + defaultSoldiers;
+        timeBetweenAttacks = diff.aIParameters.TimeBetweenAttacks;
+        soldierIncreaseBetweenStages = diff.aIParameters.unitIncreaseBetweenTime;
     }
 
     public void addSoldierToTheList(Soldier soldier)
@@ -54,7 +72,13 @@ public class AIMercenary : MonoBehaviour
         if(timeElapsed >= timeBetweenAttacks)
         {
             allowAttack = true;
-            //timeElapsed = 0;
+            if(stage != 3)
+            {
+                stage++;
+                //defaultSoldiers+=soldierIncreaseBetweenStages;
+                //soldierIncrease+=soldierIncreaseBetweenStages;
+            }
+            timeElapsed = 0;
         }
         recruitedSoldiers.RemoveAll(item => item == null);
         float perc = ((float)recruitedSoldiers.Count / (float)maxSoldiers)*100;
@@ -62,16 +86,24 @@ public class AIMercenary : MonoBehaviour
         {
             allowAttack = false;
         } 
+
+        animator.SetBool("underAttack", AIState.GetState() == AIStates.UnderAttack ? true : false);
+        if(AIState.GetState() == AIStates.UnderAttack)
+        {
+            maxSoldiers = soldierIncrease;
+        } else{
+            maxSoldiers = defaultSoldiers;
+        }
         
         
     }
-    void SendUnitsTo()
+    void SendUnitsTo(List<Soldier> soldiers)
     {
-        foreach (var s in recruitedSoldiers)
+        foreach (var s in soldiers)
         {
-            if(aiStates == AIStates.Attack)
+            if(AIState.GetState() == AIStates.Attack)
             s.IssuePath(playerTownHall.transform.position);
-            if(aiStates == AIStates.Retreat)
+            if(AIState.GetState() == AIStates.Retreat)
             s.IssuePath(aiTownHall.transform.position);
         }    
     }
@@ -80,7 +112,6 @@ public class AIMercenary : MonoBehaviour
     {
         foreach(Soldier s in recruitedSoldiers)
         {
-            
             float distance = Vector3.Distance(s.transform.position, aiTownHall.transform.position);
             if(distance < 40)
                 return true;
@@ -90,7 +121,7 @@ public class AIMercenary : MonoBehaviour
 
     public void SendSoldiersToAttack()
     {
-        SendUnitsTo();
+        SendUnitsTo(recruitedSoldiers);
     }
 
     public bool findIdleSoldiers()
@@ -107,17 +138,11 @@ public class AIMercenary : MonoBehaviour
 
     public void sendIdleSoldiersToCurrentAction()
     {
-        foreach (var s in idleSoldiers)
-        {
-            SendUnitsTo();
-        }
+
+        
+        SendUnitsTo(idleSoldiers);
+
         idleSoldiers.Clear();
     }
-
-    public void SetAIState(AIStates state)
-    {
-        aiStates = state;
-    }
     
-
 }

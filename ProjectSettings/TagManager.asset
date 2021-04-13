@@ -12,6 +12,7 @@ TagManager:
   - metal
   - stone
   - Enemy
+  - Ground
   layers:
   - Default
   - TransparentFX

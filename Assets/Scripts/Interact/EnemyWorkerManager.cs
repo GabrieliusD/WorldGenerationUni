@@ -12,9 +12,9 @@ public class EnemyWorkerManager : MonoBehaviour
             Instance = this;
         }
     }
-    int maxWoodWorkers;
-    int maxStoneWorkers;
-    int maxMetalWorkers;
+    public int maxWoodWorkers{get; private set;}
+    public int maxStoneWorkers{get; private set;}
+    public int maxMetalWorkers{get; private set;}
 
     int currentWoodWorkers;
     int currentStoneWorkers;

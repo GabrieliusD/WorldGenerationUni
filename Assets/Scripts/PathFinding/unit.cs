@@ -59,13 +59,15 @@ public struct UnitStorage
 }
 public class unit : UnitBase
 {
+    public int unitCapacity;
+    public int unitGatherAmount;
     public UnitStorage unitStorage;
 
     public PlayerTypes playerTypes = PlayerTypes.humanPlayer;
     override public void Start()
     {
         base.Start();
-        unitStorage = new UnitStorage(100);
+        unitStorage = new UnitStorage(unitCapacity);
     }
 
     void Update()
@@ -89,10 +91,12 @@ public class unit : UnitBase
     public void GatherResource(ResourceType resourceType)
     {
         unitStorage.SetResourceType(resourceType);
-        unitStorage.Gather(50);
+        unitStorage.Gather(unitGatherAmount);
+        animator.SetBool("working", true);
         if(unitStorage.checkFull())
         {
             Debug.Log("unit storage is full");
+            animator.SetBool("working", false);
             DepositResource();
         }
     }
@@ -131,5 +135,16 @@ public class unit : UnitBase
         }
         focus = null;
         StopTracking();
+    }
+    private void OnDestroy()
+    {
+        if(tag == "Player")
+        {
+            WorkerManager.Instance.DecreaseCurrentWorkers(unitStorage.GetResourceType());
+        }
+        if(tag == "Enemy")
+        {
+            EnemyWorkerManager.Instance.DecreaseCurrentWorkers(unitStorage.GetResourceType());
+        }
     }
 }

@@ -6,17 +6,23 @@ public class ChaseEnemy : BaseEnemyState
 {
     	override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
 		base.OnStateEnter(animator,stateInfo,layerIndex);
-		if(opponent != null)
-			NPC.GetComponent<UnitBase>().IssuePath(opponent.transform.position);
+		if(NPC.tag != "Player")
+		{
+			if(opponent != null)
+				NPC.GetComponent<UnitBase>().IssuePath(opponent.transform.position);
+		}
 
 	}
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo animatorStateInfo, int layerIndex)
     {
-		if(opponent == null ) 
-			animator.SetFloat("distance", Mathf.Infinity);
-		if(opponent != null && NPC.body.velocity.magnitude <= 0)
-		    NPC.GetComponent<UnitBase>().IssuePath(opponent.transform.position);
+		if(NPC.tag != "Player")
+		{
+			if(opponent == null ) 
+				animator.SetFloat("distance", Mathf.Infinity);
+			if(opponent != null && NPC.body.velocity.magnitude <= 0)
+				NPC.GetComponent<UnitBase>().IssuePath(opponent.transform.position);
+		}
 		
 
     }

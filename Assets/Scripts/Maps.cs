@@ -33,11 +33,17 @@ public class Maps : MonoBehaviour
     public MinMaxTracker heightTracker;
 
     private float[,] finalMap;
-    
+
+    public float maskThreshold = 10.0f;
     private void Start()
     {
+        seed = WorldSettings.Instance.getSeed();
         NoiseGenerator.Init();
-        GenerateMap();
+        if(WorldSettings.Instance.GetMapType() == "Island")
+        GradientMap.GenerateIslandMask((mapChunkSize-1)*3, (mapChunkSize-1)*3, maskThreshold);
+        if(WorldSettings.Instance.GetMapType() == "Island v2")
+        GradientMap.GenerateSquareIslandMask((mapChunkSize-1)*3, (mapChunkSize-1)*3, maskThreshold);
+        //GenerateMap();
     }
     public void GenerateMap()
     {
@@ -78,6 +84,8 @@ public class Maps : MonoBehaviour
         }
 
 
+
+
         Display display = FindObjectOfType<Display>();
         display.DrawNoiseMap(map);
 
@@ -85,7 +93,7 @@ public class Maps : MonoBehaviour
 
     }
 
-    public MeshMatData GetGeneratedData(Vector2 centre)
+    public MeshMatData GetGeneratedData(Vector2 centre, Vector2 coord)
     {
         heightTracker = new MinMaxTracker();
 
@@ -93,9 +101,9 @@ public class Maps : MonoBehaviour
         for (int i = 0; i < noiseSettings.Length; i++)
         {
             float[,] newMap = NoiseGenerator.GenerateNoise(noiseSettings[i], seed, centre);
-            for (int x = 0; x < newMap.GetLength(0); x++)
+            for (int y = 0; y < newMap.GetLength(0); y++)
             {
-                for (int y = 0; y < newMap.GetLength(1); y++)
+                for (int x = 0; x < newMap.GetLength(1); x++)
                 {
                     if (noiseSettings[i].noiseMode == NoiseSettings.NoiseMode.Add)
                     {
@@ -113,12 +121,29 @@ public class Maps : MonoBehaviour
                 }
             }
         }
+
+        Debug.Log(centre);
+
         for (int x = 0; x < map.GetLength(0); x++)
         {
             for (int y = 0; y < map.GetLength(1); y++)
             {
                 heightTracker.AddValue(map[x, y]);
 
+            }
+        }
+        if(WorldSettings.Instance.GetMapType() != "Continues")
+        for (int x = 0; x < map.GetLength(0) ; x++)
+        {
+            for (int y = 0; y < map.GetLength(1); y++)
+            {
+                float m1 = (map.GetLength(0)-1)*3f;
+                float m2 = (map.GetLength(1)-1)*3f;
+                float pointX = ((float)x+(centre.x)) /m1;
+                float pointY = ((float)y+(-centre.y)) / m2;
+
+
+                map[x,y] = map[x,y] * GradientMap.sampleGradient(pointY,pointX);
             }
         }
         colorGen.UpdateSettings(colorSettings);

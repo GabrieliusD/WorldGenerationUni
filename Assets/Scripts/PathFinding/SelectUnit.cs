@@ -87,23 +87,27 @@ public class SelectUnit : MonoBehaviour
             {
                 if(hit.collider.tag != "Player")
                 {
-                Interactable inte = hit.collider.GetComponent<Interactable>();
+                Interactable[] inte = hit.collider.GetComponents<Interactable>();
                 if(inte != null)
                 {
                     foreach(UnitBase u in units)
                     {
-                        if(WorkerManager.Instance.AllowWorker(inte.GetResourceType()))
+                        foreach(Interactable i in inte)
                         {
-                            if(u.GetType() == typeof(unit) && inte.GetType() != typeof(InteractAttackable))
+                            if(WorkerManager.Instance.AllowWorker(i.GetResourceType()))
                             {
-                                u.SetFocus(inte);
-                                WorkerManager.Instance.IncreaseCurrentWorkers(inte.GetResourceType());
+                                if(u.GetType() == typeof(unit) && i.GetType() != typeof(InteractAttackable))
+                                {
+                                    u.SetFocus(i);
+                                    WorkerManager.Instance.IncreaseCurrentWorkers(i.GetResourceType());
+                                }
+                            }
+                            
+                            if(u.GetType() == typeof(Soldier) && i.GetType() == typeof(InteractAttackable))
+                            {
+                                u.SetFocus(i);
                             }
                         }
-                            if(u.GetType() == typeof(Soldier) && inte.GetType() == typeof(InteractAttackable))
-                            {
-                                u.SetFocus(inte);
-                            }
                     }
                 } else foreach(UnitBase u in units) u.RemoveFocus();
                 }
@@ -125,13 +129,42 @@ public class SelectUnit : MonoBehaviour
                 {
                     Vector3 target = hit.point;
                     units.RemoveAll((item => item == null));
-
+                    List<Vector3> targetPositionList = GetPositionListAround(target, new float[]{2,4,6}, new int[] {5, 7, 10});
+                    int posIndex = 0;
                     foreach(UnitBase u in units)
                     {
-                        u.GetComponent<UnitBase>().IssuePath(target);
+                        u.GetComponent<UnitBase>().IssuePath(targetPositionList[posIndex]);
+                        posIndex = (posIndex + 1) % targetPositionList.Count;
                     }
                 }
             }
         }
+    }
+    List<Vector3> GetPositionListAround(Vector3 startPosition, float[] ringDistanceArray, int[] ringPositionCountArray)
+    {
+        List<Vector3> PositionList = new List<Vector3>();
+        PositionList.Add(startPosition);
+        for(int i =0; i<ringDistanceArray.Length; i++)
+        {
+            PositionList.AddRange(GetPositionListAround(startPosition, ringDistanceArray[i], ringPositionCountArray[i]));
+        }
+        return PositionList;
+    }
+    List<Vector3> GetPositionListAround(Vector3 startPosition, float distance, int positionCount)
+    {
+        List<Vector3> positionList = new List<Vector3>();
+        for (int i = 0; i < positionCount; i++)
+        {
+            float angle = i * (360f / positionCount);
+            Vector3 dir = ApplyRotationToVector(new Vector3(1,0), angle);
+            Vector3 position = startPosition + dir * distance;
+            positionList.Add(position);
+        }
+        return positionList;
+    }
+
+    Vector3 ApplyRotationToVector(Vector3 vec, float angle)
+    {
+        return Quaternion.Euler(0,angle,0) * vec;
     }
 }

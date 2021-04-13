@@ -12,14 +12,19 @@ public class CameraController : MonoBehaviour
     public float minHeight = 10.0f;
     void Update()
     {
+        float moveX = 0;
+        float moveY = 0;
+        moveX = Input.GetAxis("Horizontal") * Time.deltaTime * cameraSpeed/4;
+        moveY = Input.GetAxis("Vertical") * Time.deltaTime * cameraSpeed/4;
+
         if(Input.GetMouseButton(2))
         {
-            float moveX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * cameraSpeed;
-            float moveY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * cameraSpeed;
+            moveX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * cameraSpeed;
+            moveY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * cameraSpeed;
 
-            transform.position += new Vector3(moveX, 0 ,moveY);
         }
 
+        transform.position += new Vector3(moveX, 0 ,moveY);
         float scroll = -Input.GetAxisRaw("Mouse ScrollWheel") * cameraScrollSpeed;
         transform.position += new Vector3(0,scroll,0);
         if(transform.position.y >= maxHeight)

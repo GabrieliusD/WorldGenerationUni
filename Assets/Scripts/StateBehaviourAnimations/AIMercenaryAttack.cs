@@ -6,7 +6,7 @@ public class AIMercenaryAttack : AIMercenaryBase
 {
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
 		base.OnStateEnter(animator,stateInfo,layerIndex);
-        ai.SetAIState(AIStates.Attack);
+        aiState.SetState(AIStates.Attack);
         ai.SendSoldiersToAttack();
 	}
 

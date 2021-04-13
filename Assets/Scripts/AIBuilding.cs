@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class AIBuilding : MonoBehaviour
 {
+    public Vector3 DistanceBetweenBuildings;
+    public float BuildingRadius;
+    public float minDistanceForUnderAttack = 100.0f;
     bool isBuild = false;
     public LayerMask SphereCheck;
     EnemyWorkerManager enManager;
@@ -12,7 +15,13 @@ public class AIBuilding : MonoBehaviour
 
     public BuildingInteract enemyHallInt;
     Dictionary<string, Building> buildingByName = new Dictionary<string, Building>();
-    List<string> buildings = new List<string>() { "hut", "mercenary" };
+    List<GameObject> buildingsInGame = new List<GameObject>();
+
+    Animator animator;
+    Grid grid;
+    int maxWoodHut = 2;
+    int maxStoneHut = 1;
+    int maxMetalHut = 1;
     void setSpawnLocation(Transform location)
     {
         mLocation = location;
@@ -26,58 +35,108 @@ public class AIBuilding : MonoBehaviour
     }
     private void Start()
     {
-
+        AIStateManager state = new AIStateManager();
+        animator = GetComponent<Animator>();
         enManager = EnemyWorkerManager.Instance;
         setSpawnLocation(this.transform);
         createDictionary();
-        buildResourcesCollection();
-        StartCoroutine(lateStart(3f));
+        InvokeRepeating("checkUnderAttack", 2.0f, 2.0f);
+        grid = FindObjectOfType<Grid>();
     }
 
-    IEnumerator lateStart(float waitTime)
+    private void Update()
     {
-        yield return new WaitForSeconds(waitTime);
+        checkBuildingNeeded();
+        checkWorkerNeeded();
+    }
+
+    void checkBuildingNeeded()
+    {
+        animator.SetBool("MetalHut", enManager.maxMetalWorkers >= maxMetalHut ? true : false);
+        animator.SetBool("StoneHut", enManager.maxStoneWorkers >= maxStoneHut ? true : false);
+        animator.SetBool("WoodHut", enManager.maxWoodWorkers >= maxWoodHut ? true : false);
+
+    }
+
+    void checkWorkerNeeded()
+    {
+        bool check;
+        bool check1 = enManager.AllowWorker(ResourceType.Wood);
+        bool check2 = enManager.AllowWorker(ResourceType.Metal);
+        bool check3 = enManager.AllowWorker(ResourceType.Stone);
+        if(check1 || check2 || check3)
+            check = true; else check = false;
+        animator.SetBool("worker", check);
+        
+    }
+
+    void checkUnderAttack()
+    {
+        GameObject[] objects = GameObject.FindGameObjectsWithTag("Player");
+        List<GameObject> inDistance = new List<GameObject>();
+        foreach(GameObject o in objects)
+        {
+            float distance = Vector3.Distance(this.transform.position, o.transform.position);
+            if(distance <= minDistanceForUnderAttack)
+            {
+                inDistance.Add(o);
+                //AIStateManager.Instance.SetState(AIStates.UnderAttack);
+            }
+        }
+        //if(inDistance.Count == 0) AIStateManager.Instance.SetState(AIStates.None);
+    }
+
+    public void recruitWorkers()
+    {
         recruitWoodWorkers();
         recruitStoneWorkers();
         recruitMetalWorkers();
-        build("mercenary");
     }
 
-    public void buildResourcesCollection()
-    {
-        build("WoodHut");
-        build("StoneHut");
-        build("MetalHut");
-    }
-    public void build(string BuildingName)
+    public void build(string BuildingName, Animator anim)
     {
         Building b = buildingByName[BuildingName];
         if (b != null)
+        {
+            b.buildingType.GetComponent<BuildingBase>().trackIfDestroyed = anim;
             build(b);
+        }
         else Debug.Log("Building doesnt exist");
     }
     public void build(Building building)
     {
+        int loops = 10;
         isBuild = false;
         Debug.Log("AI Building");
-        while (!isBuild)
+        BuildingObjectParameter bop = building.buildingType.GetComponent<BuildingObjectParameter>();
+
+        if (ResourceManager.Instance.PurchaseBuilding(bop.woodCost, bop.stoneCost, PlayerTypes.AIPlayer))
         {
-            Vector3 centre = transform.position;
-            int radius = 20;
-            Vector2 randomPos = Random.insideUnitCircle * radius;
-            Vector3 v = centre + new Vector3(randomPos.x, 10, randomPos.y);
-            RaycastHit hit;
-            if (Physics.Raycast(v, Vector3.down, out hit, 20.0f))
+            while (!isBuild)
             {
-                if (!Physics.CheckSphere(v, 10.0f, SphereCheck))
+                Vector3 centre = transform.position;
+                Vector2 randomPos = Random.insideUnitCircle * BuildingRadius;
+                Vector3 v = centre + new Vector3(randomPos.x, 10, randomPos.y);
+                RaycastHit hit;
+                if (Physics.Raycast(v, Vector3.down, out hit, 20.0f))
                 {
-                    building.buildingType.GetComponent<BuildingObjectParameter>().playerTypes = PlayerTypes.AIPlayer;
-                    building.buildingType.tag = "Enemy";
-                    Instantiate(building.buildingType, hit.point, Quaternion.identity);
-                    isBuild = true;
+                    if (hit.collider.tag == "Ground" && !Physics.CheckBox(hit.point, DistanceBetweenBuildings, Quaternion.identity,SphereCheck) )
+                    {
+                        
+                        bop.playerTypes = PlayerTypes.AIPlayer;
+                        building.buildingType.tag = "Enemy";
+                        GameObject constructed = Instantiate(building.buildingType, hit.point, Quaternion.identity);
+                        buildingsInGame.Add(constructed);
+                        grid.SetNodeUnwakable(constructed);
+                        isBuild = true;
+                        animator.SetBool(building.name, true);
+                    }
                 }
+                loops++;
+
             }
-        }
+            Debug.Log("Num Loops: " + loops);
+        } else animator.SetBool("missing", true);
     }
 
     void recruitWorkerWithTag(string tag)
@@ -100,6 +159,7 @@ public class AIBuilding : MonoBehaviour
     {
         if (enManager.AllowWorker(ResourceType.Wood))
         {
+            enManager.IncreaseCurrentWorkers(ResourceType.Wood);
             recruitWorkerWithTag("tree");
         }
     }
@@ -108,6 +168,7 @@ public class AIBuilding : MonoBehaviour
     {
         if (enManager.AllowWorker(ResourceType.Stone))
         {
+            enManager.IncreaseCurrentWorkers(ResourceType.Stone);
             recruitWorkerWithTag("stone");
         }
     }
@@ -115,9 +176,13 @@ public class AIBuilding : MonoBehaviour
     {
         if (enManager.AllowWorker(ResourceType.Metal))
         {
+            enManager.IncreaseCurrentWorkers(ResourceType.Metal);
             recruitWorkerWithTag("metal");
         }
     }
 
-
+    private void OnDestroy()
+    {
+        CancelInvoke("checkUnderAttack");
+    }
 }

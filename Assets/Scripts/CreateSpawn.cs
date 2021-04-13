@@ -54,7 +54,7 @@ public class CreateSpawn
         float waterLevel = WaterLevel.Instance.GetWaterLevel();
             foreach (var v in vertices)
                 {
-                    if(v.y > waterLevel && v.y < 15)
+                    if(v.y > waterLevel+1 && v.y < 15)
                     {
 
                         walkableVertices.Add(v);
@@ -67,15 +67,17 @@ public class CreateSpawn
     }
     public void SpawnRandomAndFindPath(Dictionary<Vector2,TerrainChunk> terrainChunkDictionary, int numVisible, int chunkSize)
     {
-        for(int yOffset = -numVisible; yOffset <= numVisible; yOffset++)
+        numVisible = 3;
+        System.Random random = new System.Random(1);
+        for(int yOffset = 0; yOffset > -numVisible; yOffset--)
         {
-            int xOffset = -numVisible;
+            int xOffset = 0;
             Vector3 pos = new Vector3(xOffset * chunkSize, 0,yOffset * chunkSize);
             Debug.DrawLine(pos,pos + Vector3.up * 30,Color.red, Mathf.Infinity);
             TerrainChunk tc1 = terrainChunkDictionary[new Vector2(xOffset,yOffset)];
-            for(int yOffset2 = -numVisible; yOffset2 <= numVisible; yOffset2++)
+            for(int yOffset2 = -2; yOffset2 < 0; yOffset2++)
             {
-                int xOffset2 = numVisible;
+                int xOffset2 = 2;
                 Vector3 pos2 = new Vector3(xOffset2 * chunkSize, 0,yOffset2 * chunkSize);
                 Debug.DrawLine(pos2,pos2 + Vector3.up * 30,Color.red, Mathf.Infinity);
                 TerrainChunk tc2 = terrainChunkDictionary[new Vector2(xOffset2,yOffset2)];
@@ -87,8 +89,8 @@ public class CreateSpawn
                 v1 = FindVerticesInRange(v1);
                 v2 = FindVerticesInRange(v2);
                 
-                int r1 = Random.Range(0, v1.Count);
-                int r2 = Random.Range(0, v2.Count);
+                int r1 = random.Next(0, v1.Count);
+                int r2 = random.Next(0, v2.Count);
                 if(v1.Count == 0 || v2.Count == 0) continue;
                 //Vector3 pos = new Vector3(xOffset * chunkSize + v.x, v.y, yOffset*chunkSize + v.z);
                 Vector3 worldPos1 = new Vector3(xOffset*chunkSize + v1[r1].x, v1[r1].y, yOffset*chunkSize + v1[r1].z);
