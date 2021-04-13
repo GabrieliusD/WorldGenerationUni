@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 public enum PlayerTypes {humanPlayer = 0, AIPlayer = 1, playerTotal = 2}
@@ -8,11 +8,16 @@ public class ResourceManager : MonoBehaviour
 
     void Awake()
     {
+        
         if (Instance == null)
         {
             Instance = this;
         }
     }
+    public int[] setWood = new int[2];
+    public int[] setStone = new int[2];
+    public int[] setMetal = new int[2];
+    public int[] setGold = new int[2];
 
     int woodCost = 10;
     int stoneCost = 30;
@@ -26,13 +31,34 @@ public class ResourceManager : MonoBehaviour
 
     void Start()
     {
+        ConfigureResourceSettings();
+    }
+
+    public void setUpTest(int value)
+    {
         for (int i = 0; i < numPlayers; i++)
-        {            
-            wood[i] = 1000;
-            stone[i] = 0;
-            metal[i] = 0;
-            gold[i] = 3000;
+        {
+            wood[i] = value;
+            stone[i] = value;
+            gold[i] = value;
+            metal[i] = value;
         }
+    }
+
+    public void ConfigureResourceSettings()
+    {
+        WorldSettings ws = WorldSettings.Instance;
+        StartingResources pR = ws.GetDifficulty().playerResources;
+        wood[0] = pR.wood;
+        stone[0] = pR.stone;
+        metal[0] = pR.metal;
+        gold[0] = pR.gold;        
+
+        StartingResources aiR = ws.GetDifficulty().aiResources;
+        wood[1] = aiR.wood;
+        stone[1] = aiR.stone;
+        metal[1] = aiR.metal;
+        gold[1] = aiR.gold;
     }
 
     public void DepositResource(ResourceType resourceType, int amount, PlayerTypes playerType)
@@ -134,6 +160,7 @@ public class ResourceManager : MonoBehaviour
     public int GetWood(PlayerTypes playerType)
     {
         return wood[(int)playerType];
+        
     } 
     public void SetWood(int amount, PlayerTypes playerType)
     {
