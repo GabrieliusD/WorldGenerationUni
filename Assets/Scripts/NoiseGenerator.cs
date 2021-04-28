@@ -12,7 +12,7 @@ public class NoiseGenerator
         noiseLite = new FastNoiseLite();
     }
 
-    public static float[,] GenerateNoise(NoiseSettings noiseSettings, int seed, Vector2 offset)
+    public static float[,] GenerateNoise(SettingsVariation noiseSettings, int seed, Vector2 offset)
     {
         Init();
         float halfX = noiseSettings.mapChunkSize-1;

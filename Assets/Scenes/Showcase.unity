@@ -204,7 +204,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   marchinCubeSize: {x: 200, y: 10, z: 200}
-  scale: 1
+  scale: 0.13
   grid:
     p:
     - {x: 0, y: 0, z: 0}

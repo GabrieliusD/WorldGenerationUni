@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94eec7ae94a25f849b32f4e0fe01e4e0, type: 3}
+  m_Name: NarrowPassage
+  m_EditorClassIdentifier: 
+  terrainName: Narrow Passage
+  maxHeight: 2
+  seed: 1445
+  mapChunkSize: 121
+  mapType: 0
+  hasWater: 0
+  SettingsVariations:
+  - noiseMode: 0
+    mapChunkSize: 121
+    enabled: 1
+    useLayerAsMask: 0
+    InverseLayer: 0
+    sampleBelow: 0
+    scale: 1.06
+    lacunarity: 1.03
+    octives: 5
+    strength: 23.34
+    minValue: 0.42
+    noiseType: 0
+    fractalType: 0
+  - noiseMode: 1
+    mapChunkSize: 121
+    enabled: 1
+    useLayerAsMask: 1
+    InverseLayer: 1
+    sampleBelow: 0.5
+    scale: 3.88
+    lacunarity: 1.79
+    octives: 5
+    strength: 11.3
+    minValue: 2.33
+    noiseType: 0
+    fractalType: 2
+  - noiseMode: 0
+    mapChunkSize: 121
+    enabled: 1
+    useLayerAsMask: 1
+    InverseLayer: 0
+    sampleBelow: 0.47
+    scale: 0.43
+    lacunarity: 1.79
+    octives: 5
+    strength: 12.25
+    minValue: 0
+    noiseType: 0
+    fractalType: 1

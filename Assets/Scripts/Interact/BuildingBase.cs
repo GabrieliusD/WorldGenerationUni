@@ -11,6 +11,7 @@ public class BuildingBase : MonoBehaviour
     public virtual void Start()
     {
         this.gameObject.AddComponent<InteractAttackable>();
+        if(GameObjectTracker.Instance != null)
         GameObjectTracker.Instance.AddObject(gameObject);
     }
     public virtual void Interaction()
@@ -32,7 +33,7 @@ public class BuildingBase : MonoBehaviour
         isSelected = selected;
     }
 
-    private void OnDestroy()
+    public virtual void OnDestroy()
     {
         GameObjectTracker.Instance.RemoveObject(gameObject);
     }

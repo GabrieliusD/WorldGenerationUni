@@ -18,7 +18,7 @@ public class WoodHudInteract : BuildingBase
         EnemyWorkerManager.Instance.WoodHutBuild();
     }
 
-    void OnDestroy()
+    public override void OnDestroy()
     {
         if(PlayerType == PlayerTypes.humanPlayer)
         WorkerManager.Instance.woodHutDestroyed();

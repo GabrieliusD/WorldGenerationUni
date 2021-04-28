@@ -13,6 +13,15 @@ public class WaterLevel : MonoBehaviour
             Instance = this;
         }
     }
+    public void HasWater(bool enable)
+    {
+        Instance.gameObject.SetActive(enable);
+    }
+    public void SetWaterLevel(float waterlevel)
+    {
+        Vector3 pos = Instance.transform.position;
+        pos = new Vector3(pos.x, waterlevel, pos.z);
+    }
 
     public float GetWaterLevel()
     {

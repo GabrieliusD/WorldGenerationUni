@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94eec7ae94a25f849b32f4e0fe01e4e0, type: 3}
+  m_Name: NewWorldType
+  m_EditorClassIdentifier: 
+  terrainName: 
+  maxHeight: 5
+  seed: 1337
+  mapChunkSize: 121
+  mapType: 0
+  hasWater: 1
+  SettingsVariations:
+  - noiseMode: 0
+    mapChunkSize: 121
+    enabled: 1
+    useLayerAsMask: 0
+    InverseLayer: 0
+    sampleBelow: 0
+    scale: 4.86
+    lacunarity: 1
+    octives: 5
+    strength: 7.06
+    minValue: 0.34
+    noiseType: 0
+    fractalType: 3
+  - noiseMode: 1
+    mapChunkSize: 121
+    enabled: 1
+    useLayerAsMask: 1
+    InverseLayer: 1
+    sampleBelow: 0.39
+    scale: 1.22
+    lacunarity: 1.33
+    octives: 5
+    strength: 11.88
+    minValue: 2.93
+    noiseType: 0
+    fractalType: 1

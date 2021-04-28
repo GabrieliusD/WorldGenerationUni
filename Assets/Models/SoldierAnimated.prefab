@@ -666,6 +666,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   slider: {fileID: 1502370663015957555}
+  soldierName: Knight
   goldCost: 200
   attackDamage: 0
 --- !u!114 &9144658394645424097
@@ -680,6 +681,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 562d83fb4ac199b419589990bbb1c79e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  UnitName: Soldier
   PlayerType: 0
   focus: {fileID: 0}
   lastFocus: {fileID: 0}
@@ -687,6 +689,7 @@ MonoBehaviour:
   body: {fileID: 0}
   moving: 0
   attackSpeed: 2
+  searchDistance: 20
 --- !u!136 &5026756382817198005
 CapsuleCollider:
   m_ObjectHideFlags: 0

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class UnitBase : MonoBehaviour
 {
+    public string UnitName;
     public PlayerTypes PlayerType;
     protected float health = 20.0f;
     public Interactable focus;

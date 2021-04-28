@@ -15,6 +15,7 @@ public class BuildMenuNavigation : MonoBehaviour
     }
     public Transform ProductionPanel;
     public Transform MillitaryPanel;
+    public Transform ButtonInitLocation;
     public Transform ConstructionPanel;
     public Transform TownHallMenu;
 
@@ -24,7 +25,7 @@ public class BuildMenuNavigation : MonoBehaviour
 
     public Button purchaseSoldier;
 
-    public void EnableProduction()
+    public void ResetMenus()
     {
         ProductionPanel.gameObject.SetActive(true);
         MillitaryPanel.gameObject.SetActive(false);
@@ -33,54 +34,6 @@ public class BuildMenuNavigation : MonoBehaviour
         MarketMenu.gameObject.SetActive(false);
         MercnerayMenu.gameObject.SetActive(false);
 
-    }
-    public void EnableMillitary()
-    {
-        ProductionPanel.gameObject.SetActive(false);
-        MillitaryPanel.gameObject.SetActive(true);
-        ConstructionPanel.gameObject.SetActive(false);
-        TownHallMenu.gameObject.SetActive(false);
-        MarketMenu.gameObject.SetActive(false);
-        MercnerayMenu.gameObject.SetActive(false);
-    }
-    public void EnableConstruction()
-    {
-        ProductionPanel.gameObject.SetActive(false);
-        MillitaryPanel.gameObject.SetActive(false);
-        ConstructionPanel.gameObject.SetActive(true);     
-        TownHallMenu.gameObject.SetActive(false);
-        MarketMenu.gameObject.SetActive(false);
-        MercnerayMenu.gameObject.SetActive(false);   
-    }
-
-    public void EnableTownhallMenu()
-    {
-        ProductionPanel.gameObject.SetActive(false);
-        MillitaryPanel.gameObject.SetActive(false);
-        ConstructionPanel.gameObject.SetActive(false);
-        MarketMenu.gameObject.SetActive(false);
-        MercnerayMenu.gameObject.SetActive(false);
-        TownHallMenu.gameObject.SetActive(true);     
-    }
-
-    public void EnableMarketMenu()
-    {
-        ProductionPanel.gameObject.SetActive(false);
-        MillitaryPanel.gameObject.SetActive(false);
-        ConstructionPanel.gameObject.SetActive(false);      
-        TownHallMenu.gameObject.SetActive(false);
-        MercnerayMenu.gameObject.SetActive(false);
-        MarketMenu.gameObject.SetActive(true);
-    }
-
-    public void EnableMercenaryMenu()
-    {
-        ProductionPanel.gameObject.SetActive(false);
-        MillitaryPanel.gameObject.SetActive(false);
-        ConstructionPanel.gameObject.SetActive(false);      
-        TownHallMenu.gameObject.SetActive(false);
-        MarketMenu.gameObject.SetActive(false);
-        MercnerayMenu.gameObject.SetActive(true);
     }
 
 }

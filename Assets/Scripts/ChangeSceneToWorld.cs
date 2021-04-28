@@ -11,7 +11,11 @@ public class ChangeSceneToWorld : MonoBehaviour
     public Dropdown difficulty;
     public Dropdown mapType;
 
+    public Dropdown worldType;
+
     public Difficulty[] difficulties;
+    public List<NoiseSettings> noiseSettings;
+
     WorldSettings worldSettings;
     void Start()
     {
@@ -19,6 +23,29 @@ public class ChangeSceneToWorld : MonoBehaviour
         worldSettings = WorldSettings.Instance;
         System.Random random = new System.Random(DateTime.Now.Millisecond);
         worldSeed.text = random.Next(1, 99999999).ToString();
+        SetupWorldTypeDropdown();
+    }
+
+    void SetupWorldTypeDropdown()
+    {
+        List<string> options = new List<string>();
+        foreach (var setting in noiseSettings)
+        {
+            options.Add(setting.terrainName);
+        }
+        worldType.AddOptions(options);
+    }
+
+    NoiseSettings GetNameFromWorldList()
+    {
+        foreach (var setting in noiseSettings)
+        {
+            if(setting.terrainName == worldType.options[worldType.value].text)
+            {
+                return setting;
+            }
+        }
+        return noiseSettings[0];
     }
 
     public Difficulty GetDifficultyFromArray(string difficulty)
@@ -38,7 +65,7 @@ public class ChangeSceneToWorld : MonoBehaviour
         int seed = Int32.Parse(worldSeed.text);
         worldSettings.setWorldSeed(seed);
         worldSettings.setGameDifficulty(GetDifficultyFromArray(difficulty.options[difficulty.value].text));
-        worldSettings.setmapType(mapType.options[mapType.value].text);
+        worldSettings.setWorldType(GetNameFromWorldList());
 
         SceneManager.LoadScene("Scenes/SampleScene");
         

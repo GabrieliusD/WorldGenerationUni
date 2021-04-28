@@ -7,8 +7,14 @@ public class CreateSpawn
     bool pathFound = false;
     Vector3 playerLoc;
     Vector3 enemyLoc;
+    Grid grid;
+    public CreateSpawn()
+    {
+        grid = GameObject.FindObjectOfType<Grid>();
+    }
     public void Create(Dictionary<Vector2,TerrainChunk> terrainChunkDictionary, int numVisible, int chunkSize)
     {
+        
         int sizeX = 30;
         int sizeY = 30;
         Rect rect = new Rect();
@@ -48,13 +54,15 @@ public class CreateSpawn
             }
         }
     }
-    List<Vector3> FindVerticesInRange(List<Vector3> vertices)
+    List<Vector3> FindVerticesInRange(List<Vector3> vertices, float maxHeight)
     {
         List<Vector3> walkableVertices = new List<Vector3>();
-        float waterLevel = WaterLevel.Instance.GetWaterLevel();
+        float waterLevel = -5;
+        if(WorldSettings.Instance.GetNoiseSettings().hasWater)
+            waterLevel = WaterLevel.Instance.GetWaterLevel();
             foreach (var v in vertices)
                 {
-                    if(v.y > waterLevel+1 && v.y < 15)
+                    if(v.y > waterLevel+1 && v.y < maxHeight)
                     {
 
                         walkableVertices.Add(v);
@@ -65,7 +73,28 @@ public class CreateSpawn
 
                 return walkableVertices;
     }
-    public void SpawnRandomAndFindPath(Dictionary<Vector2,TerrainChunk> terrainChunkDictionary, int numVisible, int chunkSize)
+
+    Vector3 FindLocationWithSpace(Mesh mesh,int xOffset, int yOffset, int chunkSize, float maxHeight, int attempts)
+    {        
+        System.Random random = new System.Random(1);
+
+        for (int i = 0; i < attempts; i++)
+        {
+            List<Vector3> v = new List<Vector3>();
+            mesh.GetVertices(v);
+            v = FindVerticesInRange(v, maxHeight);
+            int r = random.Next(0, v.Count);
+
+            Vector3 worldPos = new Vector3(xOffset * chunkSize + v[r].x, v[r].y, yOffset * chunkSize + v[r].z);
+
+            if(grid.checkNodesAreEmpty(worldPos,8)) return worldPos; 
+            
+        }
+
+        return Vector3.zero;
+
+    }
+    public bool SpawnRandomAndFindPath(Dictionary<Vector2,TerrainChunk> terrainChunkDictionary, int numVisible, int chunkSize, float maxHeight)
     {
         numVisible = 3;
         System.Random random = new System.Random(1);
@@ -81,23 +110,10 @@ public class CreateSpawn
                 Vector3 pos2 = new Vector3(xOffset2 * chunkSize, 0,yOffset2 * chunkSize);
                 Debug.DrawLine(pos2,pos2 + Vector3.up * 30,Color.red, Mathf.Infinity);
                 TerrainChunk tc2 = terrainChunkDictionary[new Vector2(xOffset2,yOffset2)];
-                List<Vector3> v1 = new List<Vector3>();
-                List<Vector3> v2 = new List<Vector3>();
-                tc1.GetMesh().GetVertices(v1);
-                tc2.GetMesh().GetVertices(v2);
 
-                v1 = FindVerticesInRange(v1);
-                v2 = FindVerticesInRange(v2);
-                
-                int r1 = random.Next(0, v1.Count);
-                int r2 = random.Next(0, v2.Count);
-                if(v1.Count == 0 || v2.Count == 0) continue;
-                //Vector3 pos = new Vector3(xOffset * chunkSize + v.x, v.y, yOffset*chunkSize + v.z);
-                Vector3 worldPos1 = new Vector3(xOffset*chunkSize + v1[r1].x, v1[r1].y, yOffset*chunkSize + v1[r1].z);
-                Vector3 worldPos2 = new Vector3(xOffset2*chunkSize + v2[r2].x, v2[r2].y, yOffset2*chunkSize + v2[r2].z);
-                //GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                //GameObject.Instantiate(cube, worldPos1, Quaternion.identity);
-                //GameObject.Instantiate(cube, worldPos2, Quaternion.identity);
+                Vector3 worldPos1 = FindLocationWithSpace(tc1.GetMesh(),xOffset,yOffset,chunkSize,maxHeight,10);
+                Vector3 worldPos2 = FindLocationWithSpace(tc2.GetMesh(),xOffset2,yOffset2,chunkSize,maxHeight,10);
+                if(worldPos1 == Vector3.zero || worldPos2 == Vector3.zero) continue;
                 checkIfPathExists(worldPos1,worldPos2);
 
                 if(pathFound)
@@ -105,10 +121,11 @@ public class CreateSpawn
                     playerLoc = worldPos1;
                     enemyLoc = worldPos2;
                     Debug.Log("Path found between" + worldPos1 + " and " + worldPos2);
-                    return;
+                    return true;
                 }
             }
         }
+        return false;
     }
 
     public void checkIfPathExists(Vector3 pos1, Vector3 pos2)

@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94eec7ae94a25f849b32f4e0fe01e4e0, type: 3}
+  m_Name: ShallowLake
+  m_EditorClassIdentifier: 
+  terrainName: Shallow Lakes
+  maxHeight: 6
+  seed: 1337
+  mapChunkSize: 121
+  mapType: 0
+  hasWater: 1
+  SettingsVariations:
+  - noiseMode: 0
+    mapChunkSize: 121
+    enabled: 1
+    useLayerAsMask: 0
+    InverseLayer: 0
+    sampleBelow: 0
+    scale: 1.1
+    lacunarity: 2.03
+    octives: 9
+    strength: 7.25
+    minValue: 0.3
+    noiseType: 0
+    fractalType: 1
+  - noiseMode: 0
+    mapChunkSize: 121
+    enabled: 1
+    useLayerAsMask: 1
+    InverseLayer: 0
+    sampleBelow: 0
+    scale: 0.63
+    lacunarity: 1
+    octives: 2
+    strength: 9.97
+    minValue: 0.47
+    noiseType: 1
+    fractalType: 2
+  - noiseMode: 0
+    mapChunkSize: 121
+    enabled: 1
+    useLayerAsMask: 1
+    InverseLayer: 0
+    sampleBelow: 0.57
+    scale: 2.6
+    lacunarity: 1
+    octives: 5
+    strength: 14.73
+    minValue: 0.27
+    noiseType: 1
+    fractalType: 3

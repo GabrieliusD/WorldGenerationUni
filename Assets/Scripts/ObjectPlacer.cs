@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class ObjectPlacer : MonoBehaviour
 {
     public LayerMask layer;
@@ -15,6 +15,9 @@ public class ObjectPlacer : MonoBehaviour
     private int stoneCost;
     GameObject currentPlaceableObject;
     float mouseWheelRotation;
+
+    public GameObject panel;
+    public Text showPriceText;
 
     Grid grid;
 
@@ -33,7 +36,8 @@ public class ObjectPlacer : MonoBehaviour
             MoveCurrentPlaceableObjectToMouse();
             RotateFromMouseWheel();
             Release();
-        }
+        } 
+        else hideCost();
     }
     public void HoverNewObject()
     {
@@ -45,13 +49,32 @@ public class ObjectPlacer : MonoBehaviour
             prefab = null;
         }
     }
+    void showCost(BuildingObjectParameter obp)
+    {
+        panel.SetActive(true);
+        showPriceText.text = "";
+        if(obp.woodCost > 0)
+        {
+            showPriceText.text += "Wood: " + obp.woodCost + "/" + rManger.GetWood(PlayerTypes.humanPlayer) + "  ";
+        }
+        if(obp.stoneCost > 0)
+        {
+            showPriceText.text += "Stone: " + obp.stoneCost + "/" + rManger.GetStone(PlayerTypes.humanPlayer) + "  ";
+        }
 
+    }
+
+    void hideCost()
+    {
+        panel.SetActive(false);
+    }
     public void setPrefab(GameObject newPrefab)
     {
         if(currentPlaceableObject != null) Destroy(currentPlaceableObject);
 
         prefab = newPrefab;
         BuildingObjectParameter op = newPrefab.GetComponent<BuildingObjectParameter>();
+        showCost(op);
         op.playerTypes = PlayerTypes.humanPlayer;
         woodCost = op.GetWoodCost();
         stoneCost = op.GetStoneCost();
@@ -62,7 +85,7 @@ public class ObjectPlacer : MonoBehaviour
         if(Input.GetMouseButtonDown(0))
         {
             
-            if(!Physics.CheckSphere(currentPlaceableObject.transform.position, 0.5f, ObjectUnplacableLayers))
+            if(grid.checkNodesAreEmpty(currentPlaceableObject))
             {
                 if(rManger.PurchaseBuilding(woodCost, stoneCost, PlayerTypes.humanPlayer))
                 {

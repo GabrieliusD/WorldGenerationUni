@@ -20,7 +20,7 @@ public static class MeshGen
         {
             for (int x = 0; x < width; x+=increment)
             {
-                mesh.vertices[vertexIndex] = new Vector3(topLeftX + x, map[x, y], topLeftZ - y);
+                mesh.vertices[vertexIndex] = new Vector3(topLeftX + x, (map[x, y]), topLeftZ - y);
                 mesh.uvs[vertexIndex] = new Vector2(x / (float)width, y / (float)height);
                 if(x<width-1 && y < height - 1)
                 {

@@ -676,7 +676,6 @@ MonoBehaviour:
   SphereCheck:
     serializedVersion: 2
     m_Bits: 0
-  canvasScreenSpace: {fileID: 8717906538850632436}
 --- !u!114 &-4387348317652375028
 MonoBehaviour:
   m_ObjectHideFlags: 0

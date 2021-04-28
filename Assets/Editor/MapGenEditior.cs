@@ -5,6 +5,11 @@ using UnityEditor;
 [CustomEditor(typeof (Maps))]
 public class MapGenEditior : Editor
 {
+    chunks chunk;
+    private void OnEnable()
+    {
+        chunk = FindObjectOfType<chunks>();
+    }
     public override void OnInspectorGUI()
     {
         Maps map = (Maps)target;
@@ -13,14 +18,23 @@ public class MapGenEditior : Editor
         {
             if(map.autoUpdate)
             {
-                map.GenerateMap();
+                //map.GenerateMap();
+                chunk.createChunks();
             }
         }
         if(GUILayout.Button("Generate"))
         {
-            map.GenerateMap();
+            //map.GenerateMap();
+            chunk.createChunks();
         }
-        DrawColorEditor(map.colorSettings, map.GenerateMap);
+        DrawColorEditor(map.colorSettings, chunk.createChunks);
+        DrawSettings(map.noiseSettings);
+
+    }
+    void DrawSettings(Object settings)
+    {
+        Editor editor = CreateEditor(settings);
+        editor.OnInspectorGUI();
     }
     void DrawColorEditor(Object settings, System.Action onSettingsUpdated)
     {
@@ -38,4 +52,5 @@ public class MapGenEditior : Editor
             }
         }
     }
+
 }

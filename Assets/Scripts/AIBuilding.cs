@@ -122,7 +122,8 @@ public class AIBuilding : MonoBehaviour
                 {
                     if (hit.collider.tag == "Ground" && !Physics.CheckBox(hit.point, DistanceBetweenBuildings, Quaternion.identity,SphereCheck) )
                     {
-                        
+                        if(grid.checkNodesAreEmpty(hit.point, 3))
+                        {
                         bop.playerTypes = PlayerTypes.AIPlayer;
                         building.buildingType.tag = "Enemy";
                         GameObject constructed = Instantiate(building.buildingType, hit.point, Quaternion.identity);
@@ -130,6 +131,7 @@ public class AIBuilding : MonoBehaviour
                         grid.SetNodeUnwakable(constructed);
                         isBuild = true;
                         animator.SetBool(building.name, true);
+                        }
                     }
                 }
                 loops++;

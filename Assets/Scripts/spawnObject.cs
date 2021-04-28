@@ -26,14 +26,14 @@ public class spawnObject : MonoBehaviour
         townHalls[0] = t1;
         townHalls[1] = t2; 
     }
-    public void spawnTrees()
+    public void spawnTrees(float maxHeight)
     {
         points = poissonDiscSampling.GeneratePoints(radius, regionSize, rejectionSample);
 
         RaycastHit hit;
         foreach (Vector2 point in points)
         {
-            if (Physics.Raycast(new Vector3(transform.position.x - point.x,  RayLenght, transform.position.z - point.y), -Vector3.up, out hit))
+            if (Physics.Raycast(new Vector3(transform.position.x - point.x,  maxHeight, transform.position.z - point.y), -Vector3.up, out hit))
             {
                 if(hit.collider.tag != "water")
                 {

@@ -48,12 +48,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   trackIfDestroyed: {fileID: 0}
   PlayerType: 1
+  buttonToCreate: {fileID: 6375341625328757379, guid: fe95ec2e8c738a64b9f9d46b37a71950, type: 3}
   radius: 9
   animator: {fileID: 0}
-  soldier: {fileID: 2313932256215604045, guid: 3348cd259a8919e4d9d5d4e55485b01c, type: 3}
+  soldiers:
+  - {fileID: 2313932256215604045, guid: 3348cd259a8919e4d9d5d4e55485b01c, type: 3}
   SphereCheck:
     serializedVersion: 2
-    m_Bits: 1280
+    m_Bits: 1024
+  terrain:
+    serializedVersion: 2
+    m_Bits: 4096
 --- !u!114 &5942980621798251712
 MonoBehaviour:
   m_ObjectHideFlags: 0

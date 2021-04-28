@@ -78,4 +78,9 @@ public class GradientMap
         int samplePointY = (int)(pointY * (circleMap.GetLength(1)-1));
         return circleMap[samplePointX, samplePointY];
     }
+
+    public static float[,] GetMask()
+    {
+        return circleMap;
+    }
 }

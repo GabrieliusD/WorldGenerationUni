@@ -618,6 +618,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13c1014c5943a74dadb6497e9a24310, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  UnitName: Worker
   PlayerType: 0
   focus: {fileID: 0}
   lastFocus: {fileID: 0}
@@ -641,6 +642,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 20
   slider: {fileID: 402061934735094551}
+  soldierName: Worker
   goldCost: 100
   attackDamage: 0
 --- !u!95 &7593283624649521861

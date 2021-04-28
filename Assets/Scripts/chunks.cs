@@ -13,7 +13,7 @@ public class chunks : MonoBehaviour
     Vector3 worldCentre = Vector3.zero;
 
     public static Vector2 cameraPosition;
-    int chunkSize;
+    int chunkSize = 120;
     public int numVisible;
     public static Maps mapGen;
     Dictionary<Vector2,TerrainChunk> terrainChunkDictionary = new Dictionary<Vector2, TerrainChunk>();
@@ -36,30 +36,67 @@ public class chunks : MonoBehaviour
     void Update() {
 
     }
-    void UpdateVisibleChunks()
+
+    public void createChunks()
     {
-        for(int yOffset = 0; yOffset < 3; yOffset++)
+        ResourceManager rm = new ResourceManager();
+        rm.ConfigureResourceSettings();
+        if(mapGen == null) mapGen = FindObjectOfType<Maps>();
+        if(chunkSize == 0) chunkSize =121;
+        if(chunkSize == 121) chunkSize = chunkSize-1;
+        mapGen.CreateIslandMask();
+        destroyOldChunks();
+        for (int yOffset = 0; yOffset < 3; yOffset++)
         {
-            for(int xOffset = 0; xOffset < 3; xOffset++)
+            for (int xOffset = 0; xOffset < 3; xOffset++)
             {
-                Vector2 viewedChunkCoord = new Vector2(xOffset,-yOffset);
+                Vector2 viewedChunkCoord = new Vector2(xOffset, -yOffset);
+                terrainChunkDictionary.Add(viewedChunkCoord, new TerrainChunk(viewedChunkCoord, chunkSize, transform, gameObject.layer));
                 
-                terrainChunkDictionary.Add(viewedChunkCoord, new TerrainChunk(viewedChunkCoord, chunkSize, transform));
-                
+
             }
         }
+    }
 
-        grid.CreateGrid();
+    public void destroyOldChunks()
+    {
+        if(terrainChunkDictionary.Count > 0)
+        {
+            TerrainChunk[] terrain = new TerrainChunk[terrainChunkDictionary.Count];
+            terrainChunkDictionary.Values.CopyTo(terrain, 0);
+            foreach (TerrainChunk item in terrain)
+            {
+                DestroyImmediate(item.destroyObject());
+            }
+        }
+        terrainChunkDictionary.Clear();
+
+
+    }
+    void UpdateVisibleChunks()
+    {
+        bool pathFound = false;
         CreateSpawn  c = new CreateSpawn();
-        c.SpawnRandomAndFindPath(terrainChunkDictionary, numVisible, chunkSize);
-        
+        float maxHeight = mapGen.noiseSettings.maxHeight;
+        WaterLevel.Instance.HasWater(WorldSettings.Instance.GetNoiseSettings().hasWater);
+        int numTerrainsCreated = 0;
+        while(!pathFound)
+        {
+            numTerrainsCreated++;
+            //if(Input.GetKey(KeyCode.Escape)) break;
+            createChunks();
+            grid.CreateGrid(maxHeight);
+            pathFound = c.SpawnRandomAndFindPath(terrainChunkDictionary, numVisible, chunkSize, maxHeight);
+            if(!pathFound)
+                mapGen.seed+=1;
+        }
         GameObject th= c.playerSpawn(townHall);
         GameObject eth = c.enemySpawn(enemyTownHall);
         spawn.SetBuildings(th, eth);
         grid.SetNodeUnwakable(th);
         grid.SetNodeUnwakable(eth);
-        spawn.spawnTrees();
-
+        spawn.spawnTrees(maxHeight);
+        Debug.Log("Terrins Created: " + numTerrainsCreated);
 
     }
 }
@@ -70,12 +107,13 @@ public class chunks : MonoBehaviour
         MeshRenderer MeshRenderer;
         MeshFilter meshFilter;
         Bounds bounds;
-        public TerrainChunk(Vector2 coord, int size, Transform parent ) 
+        public TerrainChunk(Vector2 coord, int size, Transform parent, int layer) 
         {
             position = coord * size;
             bounds = new Bounds(position, Vector2.one * size);
             Vector3 positionV3 = new Vector3(position.x, 0, position.y);
             meshObject = new GameObject("TerrainChunk");
+            meshObject.layer = layer;
             MeshRenderer = meshObject.AddComponent<MeshRenderer>();
             meshFilter = meshObject.AddComponent<MeshFilter>();
             meshObject.transform.position = positionV3;
@@ -101,6 +139,11 @@ public class chunks : MonoBehaviour
         public Mesh GetMesh()
         {
             return meshFilter.mesh;
+        }
+
+        public GameObject destroyObject()
+        {
+            return meshObject;
         }
         
     }

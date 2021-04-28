@@ -13,8 +13,22 @@ public class WorldSettings
 
     static WorldSettings dataInstance = new WorldSettings();
     public static WorldSettings Instance{get {return dataInstance;}}
+    NoiseSettings settings;
 
+    WorldSettings()
+    {
+        worldSeed = 1337;
+        mapType = "Continues";
+        gameDifficulty = (Difficulty)ScriptableObject.CreateInstance("Difficulty");
+        StartingResources sr = new StartingResources();
+        sr.gold = 1000;
+        sr.metal = 1000;
+        sr.stone = 1000;
+        sr.wood = 1000;
+        gameDifficulty.aiResources = sr;
+        gameDifficulty.playerResources = sr;
 
+    }
     public void setWorldName(string name)
     {
         worldName = name;
@@ -35,6 +49,11 @@ public class WorldSettings
         mapType = type;
     }
 
+    public void setWorldType(NoiseSettings setting)
+    {
+        settings = setting;
+    }
+
     public int getSeed()
     {
         return worldSeed;
@@ -48,6 +67,11 @@ public class WorldSettings
     public string GetMapType()
     {
         return mapType;
+    }
+
+    public NoiseSettings GetNoiseSettings()
+    {
+        return settings;
     }
 
 }

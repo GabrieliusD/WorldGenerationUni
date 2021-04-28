@@ -6,7 +6,6 @@ public class Grid : MonoBehaviour
 {   
     public bool displayGridGizmos = true;
     public LayerMask unwakableMask;
-    public float maxHeight;
     Vector3 height;
     public Vector2 gridWorldSize;
     public float nodeRadius;
@@ -14,29 +13,27 @@ public class Grid : MonoBehaviour
 
     float nodeDiameter;
     int gridSizeX, gridSizeY;
+
     void Awake() 
     {
-        height = new Vector3(0,maxHeight,0);
-        nodeDiameter = nodeRadius*2;
-        gridSizeX = Mathf.RoundToInt(gridWorldSize.x/nodeDiameter);
-        gridSizeY = Mathf.RoundToInt(gridWorldSize.y/nodeDiameter);
-
-        //CreateGrid();
+        SetUp();
     }
 
-    void Update()
+    public void SetUp()
     {
-        if(Input.GetKeyDown(KeyCode.U))
-        {
-            CreateGrid();
-        }
+        nodeDiameter = nodeRadius * 2;
+        gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
+        gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
     }
+
     public int MaxSize
     {
         get{return gridSizeX * gridSizeY;}
     }
-    public void CreateGrid()
+    
+    public void CreateGrid(float maxHeight)
     {
+        height = new Vector3(0,100,0);
         grid = new Node[gridSizeX, gridSizeY];
         Vector3 worldBottomLeft = transform.position - Vector3.right * gridWorldSize.x/2 - Vector3.forward * gridWorldSize.y/2;
         for(int x = 0; x < gridSizeX; x++)
@@ -46,17 +43,70 @@ public class Grid : MonoBehaviour
                 Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRadius) + Vector3.forward * (y * nodeDiameter + nodeRadius);
                 RaycastHit hit;
                 bool walkable = true;
-                if((Physics.Raycast(worldPoint+height,-Vector3.up, out hit,20.0f)))
+                if((Physics.Raycast(worldPoint+height,-Vector3.up, out hit,Mathf.Infinity)))
                 {
+                    if(hit.point.y > maxHeight)
+                        walkable = false;
+                    // MeshCollider mc = hit.collider as MeshCollider;
+                    // Mesh mesh = mc.sharedMesh;
+                    // int index = hit.triangleIndex*3;
+                    // Vector3 normals = mesh.normals[index] + mesh.normals[index+1] + mesh.normals[index+2];
+                    // normals = normals / 3.0f;
+
+
                     if(hit.collider.tag == "water")
                     {
                         walkable = false;
-                    } else walkable = true;
+                    }
                 }
+                else walkable = false;
                 //(Physics.CheckSphere(worldPoint, nodeRadius,unwakableMask));
                 grid[x,y] =  new Node(walkable,worldPoint,x ,y);
             }
         }
+
+        setNeighboursToUnwakable();
+
+    }
+
+    void setNeighboursToUnwakable()
+    {
+        List<Node> edges = FindEdges();
+        foreach (var edge in edges)
+        {
+            foreach(var n in GetNeighbours(edge))
+            {
+                n.walkable = false;
+            }
+        }
+    }
+    List<Node> FindEdges()
+    {
+        List<Node> Edges = new List<Node>();
+        for (int x = 0; x < gridSizeX; x++)
+        {
+            for (int y = 0; y < gridSizeY; y++)
+            {
+                Node n = grid[x,y];
+                if(n.walkable == false)
+                {
+                    List<Node> neighbours = GetNeighbours(n);
+                    foreach (var item in neighbours)
+                    {
+                        if(item.walkable)
+                        {
+                            Edges.Add(n);
+                            continue;
+                        }
+                    }
+                    
+
+                } else continue;
+            }
+        }
+
+        return Edges;
+            
     }
 
     public Node NodeFromWorldPoint(Vector3 worldPosition)
@@ -72,7 +122,41 @@ public class Grid : MonoBehaviour
 
         return grid[x,y];
     }
+    public bool checkNodesAreEmpty(GameObject gameObject)
+    {
+        Vector3 worldPos = gameObject.transform.position;
+        Collider collider = gameObject.GetComponent<Collider>();
+        Vector3 size = collider.bounds.size/2;
 
+        for (int x = -(int)size.x; x < size.x; x++)
+        {
+            for (int y = -(int)size.z; y < size.z; y++)
+            {
+                Vector3 checkPos = worldPos + new Vector3(-x, 0, y);
+                Node node = NodeFromWorldPoint(checkPos);
+                if(node.walkable) continue; else return false;
+            }
+        }
+
+        return true;
+    }
+
+    public bool checkNodesAreEmpty(Vector3 worldPos, int size)
+    {
+        Collider collider = gameObject.GetComponent<Collider>();
+
+        for (int x = -size; x < size; x++)
+        {
+            for (int y = -size; y < size; y++)
+            {
+                Vector3 checkPos = worldPos + new Vector3(-x, 0, y);
+                Node node = NodeFromWorldPoint(checkPos);
+                if (node.walkable) continue; else return false;
+            }
+        }
+
+        return true;
+    }
     public void SetNodeUnwakable(GameObject gameObject)
     {
         Vector3 worldPos = gameObject.transform.position;

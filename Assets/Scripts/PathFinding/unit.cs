@@ -34,6 +34,7 @@ public struct UnitStorage
     {
         if(!checkFull())
         taken += amount;
+        if(taken > mCapacity) taken = mCapacity;
     }
 
     public int getStorage()
@@ -55,6 +56,11 @@ public struct UnitStorage
             return true;
         }
         else return false;
+    }
+
+    public int getCapacity()
+    {
+        return mCapacity;
     }
 }
 public class unit : UnitBase

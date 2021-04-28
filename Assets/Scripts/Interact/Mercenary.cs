@@ -4,14 +4,18 @@ using UnityEngine;
 using UnityEngine.UI;
 public class Mercenary : BuildingBase
 {
+    public GameObject buttonToCreate;
     public float radius = 6;
     public Animator animator;
-    public GameObject soldier;
+    public GameObject[] soldiers;
     Button button;
     bool soldierBought = false;
     public LayerMask SphereCheck;
-
+    public LayerMask terrain;
     static GameObject currentSoldier;
+
+    Queue<GameObject> createdButtons = new Queue<GameObject>();
+    TabButton tabButton;
     public override void Start()
     {
         base.Start();
@@ -20,10 +24,20 @@ public class Mercenary : BuildingBase
             this.gameObject.AddComponent<AIMercenary>();
             Animator animator = this.gameObject.AddComponent<Animator>();
             animator.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load("AIMercenaryStates", typeof(RuntimeAnimatorController));
+        }else 
+        {
+            tabButton = gameObject.AddComponent<TabButton>();
+            tabButton.tabID = 5;
+            tabButton.tabGroup = FindObjectOfType<TabGroup>();
         }
+        
     }
-    public override void Interaction()
+    public void purchase(GameObject soldier)
     {
+        if(soldier == null)
+        {
+            soldier = soldiers[0];
+        }
         int loops = 0;
         soldierBought = false;
         Debug.Log("Recruit Soldier");
@@ -33,11 +47,11 @@ public class Mercenary : BuildingBase
         {
             Vector3 centre = transform.position;
             Vector2 randomPos = Random.insideUnitCircle * radius;
-            Vector3 v = centre + new Vector3(randomPos.x, 10, randomPos.y);
+            Vector3 v = centre + new Vector3(randomPos.x, 5, randomPos.y);
             RaycastHit hit;
-            if(Physics.Raycast(v, Vector3.down, out hit,20.0f))
+            if(Physics.Raycast(v, Vector3.down, out hit,6f,terrain))
             {
-                if(!Physics.CheckSphere(hit.point, 1.0f, SphereCheck))
+                if(!Physics.CheckSphere(hit.point, 4.0f, SphereCheck))
                 {
                     GameObject s = Instantiate(soldier,hit.point,Quaternion.identity);
                     
@@ -66,17 +80,42 @@ public class Mercenary : BuildingBase
         currentSoldier = soldier;
         Interaction();
     }
+
+    public void InstatiateButtons()
+    {
+        while(createdButtons.Count > 0)
+        {
+            GameObject createdButton = createdButtons.Dequeue();
+            Destroy(createdButton);
+        }
+        foreach (GameObject soldier in soldiers)
+        {
+            ButtonToCreateText buttonTexts = buttonToCreate.GetComponent<ButtonToCreateText>();
+            int goldCost = soldier.GetComponent<UnitObjectParameter>().goldCost;
+            string name = soldier.GetComponent<UnitObjectParameter>().soldierName;
+            buttonTexts.soldierName.text = name;
+            buttonTexts.soldierCost.text = "Gold: " + goldCost;
+            
+            GameObject buttonCreated = Instantiate(buttonToCreate,BuildMenuNavigation.Instance.ButtonInitLocation.transform);
+            buttonCreated.GetComponent<Button>().onClick.AddListener(delegate{purchase(soldier);});
+            createdButtons.Enqueue(buttonCreated);
+        }
+
+    }
     public override void EnableMenu()
     {
-        BuildMenuNavigation.Instance.EnableMercenaryMenu();
-        button = BuildMenuNavigation.Instance.purchaseSoldier.GetComponent<Button>();
-        button.onClick.AddListener(Interaction);
+        tabButton.OnPointerClick(null);
+        InstatiateButtons();
+        //BuildMenuNavigation.Instance.EnableMercenaryMenu();
+        // button = BuildMenuNavigation.Instance.purchaseSoldier.GetComponent<Button>();
+        // button.onClick.RemoveAllListeners();
+        // button.onClick.AddListener(Interaction);
     }
 
     public override void DisableMenu()
     {
-        BuildMenuNavigation.Instance.EnableProduction();
-        button.onClick.RemoveAllListeners();
+        BuildMenuNavigation.Instance.ResetMenus();
+        //button.onClick.RemoveAllListeners();
     }
 
     private void OnDestroy()

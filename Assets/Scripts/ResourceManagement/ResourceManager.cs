@@ -6,18 +6,14 @@ public class ResourceManager : MonoBehaviour
 {
     public static ResourceManager Instance{get; private set;}
 
-    void Awake()
-    {
-        
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-    }
     public int[] setWood = new int[2];
     public int[] setStone = new int[2];
     public int[] setMetal = new int[2];
     public int[] setGold = new int[2];
+
+    public int[] maxWood = new int[2];
+    public int[] maxStone = new int[2];
+    public int[] maxMetal = new int[2];
 
     int woodCost = 10;
     int stoneCost = 30;
@@ -29,10 +25,15 @@ public class ResourceManager : MonoBehaviour
     int[] metal = new int[numPlayers];
     int[] gold = new int[numPlayers];
 
-    void Start()
+    private void Awake()
     {
+        if(Instance == null)
+        Instance = this;
         ConfigureResourceSettings();
     }
+
+
+    
 
     public void setUpTest(int value)
     {
@@ -59,6 +60,30 @@ public class ResourceManager : MonoBehaviour
         stone[1] = aiR.stone;
         metal[1] = aiR.metal;
         gold[1] = aiR.gold;
+
+        for (int i = 0; i < 2; i++)
+        {
+            maxWood[i] = 500;
+            maxStone[i] = 200;
+            maxMetal[i] = 100;
+        }
+
+    }
+
+    public void IncreaseMaxStorage(PlayerTypes playerType)
+    {
+        int pt = (int)(playerType);
+        maxWood[pt] += 300;
+        maxStone[pt] += 150;
+        maxMetal[pt] += 50;
+    }
+
+    public void DecreaseMaxStorage(PlayerTypes playerType)
+    {
+        int pt = (int)(playerType);
+        maxWood[pt] -= 300;
+        maxStone[pt] -= 150;
+        maxMetal[pt] -= 50;
     }
 
     public void DepositResource(ResourceType resourceType, int amount, PlayerTypes playerType)
@@ -66,14 +91,17 @@ public class ResourceManager : MonoBehaviour
         int pt = (int)(playerType);
         if(resourceType == ResourceType.Wood)
         {
+            if(playerType == PlayerTypes.humanPlayer && wood[pt]>=maxWood[pt]) return;
             wood[pt] += amount;
         }
         if(resourceType == ResourceType.Stone)
         {
+            if (playerType == PlayerTypes.humanPlayer && stone[pt] >= maxStone[pt])return;
             stone[pt] += amount;
         }
         if(resourceType == ResourceType.Metal)
         {
+            if (playerType == PlayerTypes.humanPlayer && metal[pt] >= maxMetal[pt])return;
             metal[pt] += amount;
         }
     }
@@ -160,7 +188,6 @@ public class ResourceManager : MonoBehaviour
     public int GetWood(PlayerTypes playerType)
     {
         return wood[(int)playerType];
-        
     } 
     public void SetWood(int amount, PlayerTypes playerType)
     {
@@ -191,6 +218,19 @@ public class ResourceManager : MonoBehaviour
     public void SetGold(int amount, PlayerTypes playerType)
     {
         gold[(int)playerType] = amount;
+    }
+
+    public int GetMaxWood(PlayerTypes playerType)
+    {
+        return maxWood[(int)playerType];
+    }
+    public int GetMaxStone(PlayerTypes playerType)
+    {
+        return maxStone[(int)playerType];
+    }
+    public int GetMaxMetal(PlayerTypes playerType)
+    {
+        return maxMetal[(int)playerType];
     }
 
 }

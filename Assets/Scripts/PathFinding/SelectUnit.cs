@@ -1,15 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.EventSystems;
+using System.Linq;
 public class SelectUnit : MonoBehaviour
 {
     public LayerMask layer; 
     public List<UnitBase> units;
+
+    public Transform soldierSelectedPanel;
+    public GameObject soldierTypePrefab;
     
     Rect mouseSelectZone;
     Texture2D pixelTexture;
     Vector2 startMousePos;
+
+    
+
     void Start()
     {
         pixelTexture = new Texture2D(1,1, TextureFormat.ARGB32,false);
@@ -23,21 +30,72 @@ public class SelectUnit : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if(Physics.Raycast(ray, out hit))
             {
-                if(hit.collider.tag == "Player")
-                {
-                    UnitBase u = hit.collider.GetComponent<UnitBase>();
-                    if(!units.Contains(u))
-                        units.Add(u);
-                } else{
-                    if(units.Count > 0)
-                        units.Clear();
-                    
-                }
-            }
-  
+                if(!IsPointerOverUI())
+                if(units.Count > 0)
+                    units.Clear();
+            }         
         }
+        if(Input.GetMouseButtonUp(0))
+            DisplayUnitsSelected();
         SelectTarget();
         InteractWithObject();
+
+
+    }
+    bool IsPointerOverUI()
+    {
+        PointerEventData eventData = new PointerEventData(EventSystem.current);
+        eventData.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, results);
+        return results.Count > 0;
+    }
+    List<GameObject> objectsCurrentlyDisplayed = new List<GameObject>();
+    public void DisplayUnitsSelected()
+    {
+        if(objectsCurrentlyDisplayed.Count>0)
+        {
+            foreach (var label in objectsCurrentlyDisplayed)
+            {
+                Destroy(label);
+            }
+            objectsCurrentlyDisplayed.Clear();
+        }
+        if(units.Count > 0)
+        {
+            soldierSelectedPanel.gameObject.SetActive(true);            
+            Dictionary<string, int> typeOfSoldiers = new Dictionary<string, int>();
+            foreach (var unit in units)
+            {
+                string unitType = unit.UnitName;
+                if(!typeOfSoldiers.ContainsKey(unitType))
+                {
+                    typeOfSoldiers.Add(unitType, 1);
+                } else
+                {
+                    typeOfSoldiers[unitType]+=1;
+                }
+            }
+
+            foreach (var type in typeOfSoldiers)
+            {
+                GameObject displayButton = Instantiate(soldierTypePrefab, soldierSelectedPanel);
+                SoldierTypeText stt = displayButton.GetComponent<SoldierTypeText>();
+                stt.unitName.text = type.Key;
+                stt.unitCount.text = type.Value.ToString();
+                stt.button.onClick.AddListener(delegate
+                    {
+                        units = units.Where( item => item.UnitName == type.Key).ToList();
+                        DisplayUnitsSelected();
+                    }
+                );
+                objectsCurrentlyDisplayed.Add(displayButton);
+            }
+        }
+        else
+        {
+            soldierSelectedPanel.gameObject.SetActive(false);
+        }
     }
 
     public void SelectUnitsInRect(Rect rect)
@@ -52,6 +110,7 @@ public class SelectUnit : MonoBehaviour
                 if(unit.tag == "Player")
                 if(!units.Contains(unit))
                  units.Add(unit);
+
             }
         }
     }
@@ -125,7 +184,7 @@ public class SelectUnit : MonoBehaviour
             {
                 RaycastHit hit;
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                if(Physics.Raycast(ray, out hit,Mathf.Infinity, layer))
+                if(Physics.Raycast(ray, out hit,Mathf.Infinity))
                 {
                     Vector3 target = hit.point;
                     units.RemoveAll((item => item == null));

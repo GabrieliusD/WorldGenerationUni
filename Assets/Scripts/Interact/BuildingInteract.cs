@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 public class BuildingInteract : BuildingBase
 {
     public GameObject victoryPanel;
@@ -13,6 +14,8 @@ public class BuildingInteract : BuildingBase
     bool workerBought = false;
     public LayerMask SphereCheck;
     Grid grid;
+
+    TabButton tabButton;
     public override void Start()
     {
         base.Start();
@@ -23,6 +26,11 @@ public class BuildingInteract : BuildingBase
         victoryText = vp.transform.Find("Victory").GetComponent<Text>();
         vp.gameObject.SetActive(false);
         grid = FindObjectOfType<Grid>();
+
+        tabButton = gameObject.AddComponent<TabButton>();
+        tabButton.tabID = 3;
+        tabButton.tabGroup = FindObjectOfType<TabGroup>();
+
     }
     public override void Interaction()
     {
@@ -51,15 +59,21 @@ public class BuildingInteract : BuildingBase
     }
     public override void EnableMenu()
     {
-        BuildMenuNavigation.Instance.EnableTownhallMenu();
+        tabButton.OnPointerClick(null);
         button = BuildMenuNavigation.Instance.purchaseWorker.GetComponent<Button>();
         button.onClick.RemoveAllListeners();
         button.onClick.AddListener(Interaction);
     }
+
+    public void buttonSelected()
+    {
+        Debug.Log("button selected");
+    }
     public override void DisableMenu()
     {
-        BuildMenuNavigation.Instance.EnableProduction();
+        BuildMenuNavigation.Instance.ResetMenus();
         button.onClick.RemoveAllListeners();
+        
     }
 
     public GameObject SpawnedWorker()
@@ -84,4 +98,6 @@ public class BuildingInteract : BuildingBase
             }
         }
     }
+
+
 }

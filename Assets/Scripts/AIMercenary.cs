@@ -54,7 +54,7 @@ public class AIMercenary : MonoBehaviour
         timeElapsedRecruiting += Time.deltaTime;
         if(timeElapsedRecruiting >= recruitFrequancy)
         {
-            mercenary.Interaction();
+            mercenary.purchase(null);
             timeElapsedRecruiting = 0;
         }
     }
