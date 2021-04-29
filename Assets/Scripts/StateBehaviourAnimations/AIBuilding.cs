@@ -122,7 +122,7 @@ public class AIBuilding : MonoBehaviour
                 {
                     if (hit.collider.tag == "Ground" && !Physics.CheckBox(hit.point, DistanceBetweenBuildings, Quaternion.identity,SphereCheck) )
                     {
-                        if(grid.checkNodesAreEmpty(hit.point, 3))
+                        if(grid.checkNodesAreEmpty(hit.point, 4))
                         {
                         bop.playerTypes = PlayerTypes.AIPlayer;
                         building.buildingType.tag = "Enemy";

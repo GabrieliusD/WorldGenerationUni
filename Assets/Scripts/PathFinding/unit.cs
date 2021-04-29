@@ -83,10 +83,7 @@ public class unit : UnitBase
             Destroy(this.gameObject);
             Debug.Log("Soldier destroyed");
         }
-        //if(target != null)
-        //{
-            //IssuePath(target.position);
-        //}
+
         
     }
     public void ResumeLastTask()

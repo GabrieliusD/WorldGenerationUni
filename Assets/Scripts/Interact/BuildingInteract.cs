@@ -47,7 +47,7 @@ public class BuildingInteract : BuildingBase
             if(Physics.Raycast(v, Vector3.down, out hit,20.0f))
             {
                 bool walkable = grid.NodeFromWorldPoint(hit.point).walkable;
-                if(!Physics.CheckSphere(hit.point, 4.0f, SphereCheck))
+                if(walkable)
                 {
                     workerObject = Instantiate(worker,hit.point + Vector3.up * 2,Quaternion.identity);
                     workerObject.tag = "Player";
