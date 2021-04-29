@@ -48,7 +48,9 @@ namespace Tests
         public void TestNodeIsWakable()
         {
             GameObject placeholder = new GameObject();
-
+            GameObject plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+            plane.transform.position = new Vector3(0,-2,0);
+            plane.transform.localScale = new Vector3(10,1,10);
             Grid grid = placeholder.AddComponent<Grid>();
 
             grid.gridWorldSize = new Vector2(20, 20);
@@ -56,9 +58,16 @@ namespace Tests
             grid.SetUp();
             grid.CreateGrid(5.0f);
 
-            Node node = grid.NodeFromWorldPoint(new Vector3(0.5f, 0.5f, 0.5f));
+            GameObject tempObject = new GameObject();
+            tempObject.transform.position = new Vector3(1,1,1);
+            Bounds bound = tempObject.AddComponent<BoxCollider>().bounds;
+            bound.size = new Vector3(5,5,5);
 
-            Assert.True(node.walkable);
+            //grid.SetNodeUnwakable(tempObject);
+
+            bool result = grid.checkNodesAreEmpty(tempObject);
+
+            Assert.True(result);
 
 
         }
@@ -67,7 +76,9 @@ namespace Tests
         public void TestSetNodesUnwakalbeInDiameter()
         {
             GameObject placeholder = new GameObject();
-
+            GameObject plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+            plane.transform.position = new Vector3(0, -2, 0);
+            plane.transform.localScale = new Vector3(10, 1, 10);
             Grid grid = placeholder.AddComponent<Grid>();
 
             grid.gridWorldSize = new Vector2(20, 20);
@@ -90,7 +101,9 @@ namespace Tests
         public void TestcheckNodesAreEmptyInRadius()
         {
             GameObject placeholder = new GameObject();
-
+            GameObject plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+            plane.transform.position = new Vector3(0, -2, 0);
+            plane.transform.localScale = new Vector3(10, 1, 10);
             Grid grid = placeholder.AddComponent<Grid>();
 
             grid.gridWorldSize = new Vector2(20, 20);
@@ -98,7 +111,7 @@ namespace Tests
             grid.SetUp();
             grid.CreateGrid(5.0f);
 
-            bool result = grid.checkNodesAreEmpty(new Vector3(2,2,2), 3);
+            bool result = grid.checkNodesAreEmpty(new Vector3(2,2,2), 1);
             Assert.True(result); 
         }
 
