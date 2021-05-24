@@ -1,4 +1,4 @@
-# Procedurally Generated Worlds for an Enganging Strategy Game
+# Procedurally Generated Worlds for an Engaging  Strategy Game
 ## Final Year Project
 #### A strategy game in which each world is procedurally generated and the player has to defeat AI opponent to come out victorious!!!
 
